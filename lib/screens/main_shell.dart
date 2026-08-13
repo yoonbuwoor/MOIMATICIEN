@@ -81,7 +81,10 @@ class _MainShellState extends State<MainShell> {
       CourseListScreen(controller: widget.controller),
       QuizHubScreen(controller: widget.controller),
       const CertificationScreen(),
-      ProgressScreen(controller: widget.controller),
+      ProgressScreen(
+        controller: widget.controller,
+        onOpenCertifications: () => _selectTab(3),
+      ),
     ];
 
     return Scaffold(

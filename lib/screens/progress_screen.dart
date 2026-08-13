@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../data/certification_catalog.dart';
 import '../data/course_catalog.dart';
 import '../services/external_links.dart';
 import '../state/app_controller.dart';
@@ -7,9 +8,14 @@ import '../theme/app_theme.dart';
 import '../widgets/learning_widgets.dart';
 
 class ProgressScreen extends StatelessWidget {
-  const ProgressScreen({required this.controller, super.key});
+  const ProgressScreen({
+    required this.controller,
+    required this.onOpenCertifications,
+    super.key,
+  });
 
   final AppController controller;
+  final VoidCallback onOpenCertifications;
 
   @override
   Widget build(BuildContext context) {
@@ -18,17 +24,16 @@ class ProgressScreen extends StatelessWidget {
       child: AnimatedBuilder(
         animation: controller,
         builder: (context, child) {
-          final badges = controller.badges;
           return ListView(
             key: const PageStorageKey('progress-scroll'),
             physics: const BouncingScrollPhysics(),
             padding: const EdgeInsets.fromLTRB(20, 22, 20, 112),
             children: [
               const ScreenHeading(
-                eyebrow: 'Votre aventure',
-                title: 'Progression & récompenses',
+                eyebrow: 'Votre parcours',
+                title: 'Progression professionnelle',
                 subtitle:
-                    'Apprenez, gardez votre série et débloquez les dix badges du parcours.',
+                    'Suivez vos cours, vos quiz, vos XP et préparez une certification adaptée à votre secteur.',
               ),
               const SizedBox(height: 22),
               _LevelCard(controller: controller),
@@ -46,35 +51,17 @@ class ProgressScreen extends StatelessWidget {
                   const SizedBox(width: 12),
                   Expanded(
                     child: _StatCard(
-                      icon: Icons.workspace_premium_rounded,
-                      value:
-                          '${controller.unlockedBadgeCount}/${badges.length}',
-                      label: 'badges gagnés',
-                      color: AppColors.warning,
+                      icon: Icons.quiz_rounded,
+                      value: '${controller.bestQuizPercentages.length}',
+                      label: 'quiz tentés',
+                      color: AppColors.burgundy,
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 28),
-              Text('Vos badges', style: Theme.of(context).textTheme.titleLarge),
-              const SizedBox(height: 6),
-              Text(
-                'Les badges verrouillés montrent le prochain objectif à atteindre.',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              const SizedBox(height: 14),
-              GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: badges.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 12,
-                  childAspectRatio: 0.92,
-                ),
-                itemBuilder: (context, index) =>
-                    _BadgeCard(badge: badges[index]),
+              const SizedBox(height: 18),
+              _ProfessionalCertificationCard(
+                onOpenCertifications: onOpenCertifications,
               ),
               const SizedBox(height: 28),
               Card(
@@ -119,6 +106,71 @@ class ProgressScreen extends StatelessWidget {
             ],
           );
         },
+      ),
+    );
+  }
+}
+
+class _ProfessionalCertificationCard extends StatelessWidget {
+  const _ProfessionalCertificationCard({required this.onOpenCertifications});
+
+  final VoidCallback onOpenCertifications;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [AppColors.burgundy, AppColors.purple],
+        ),
+        borderRadius: BorderRadius.circular(26),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Row(
+            children: [
+              CircleAvatar(
+                backgroundColor: Colors.white12,
+                foregroundColor: AppColors.coral,
+                child: Icon(Icons.workspace_premium_rounded),
+              ),
+              SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'Certification professionnelle',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            '${CertificationCatalog.modules.length} parcours sectoriels sont proposés par Novateur221, avec modalités et évaluation définies avant l’inscription.',
+            style: const TextStyle(
+              color: Color(0xFFE8DCE2),
+              fontSize: 13,
+              height: 1.45,
+            ),
+          ),
+          const SizedBox(height: 15),
+          FilledButton.icon(
+            onPressed: onOpenCertifications,
+            style: FilledButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: AppColors.burgundy,
+            ),
+            icon: const Icon(Icons.arrow_forward_rounded),
+            label: const Text('Voir les parcours professionnels'),
+          ),
+        ],
       ),
     );
   }
@@ -255,64 +307,6 @@ class _StatCard extends StatelessWidget {
   }
 }
 
-class _BadgeCard extends StatelessWidget {
-  const _BadgeCard({required this.badge});
-
-  final LearningBadge badge;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = Color(badge.colorValue);
-    return Card(
-      color: badge.unlocked ? Colors.white : const Color(0xFFF5F0F2),
-      child: Padding(
-        padding: const EdgeInsets.all(15),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            CircleAvatar(
-              radius: 25,
-              backgroundColor: badge.unlocked
-                  ? color.withValues(alpha: 0.13)
-                  : const Color(0xFFE7DFE2),
-              foregroundColor: badge.unlocked ? color : AppColors.muted,
-              child: Icon(_badgeIcon(badge.iconName), size: 27),
-            ),
-            const Spacer(),
-            Text(
-              badge.title,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: badge.unlocked ? AppColors.ink : AppColors.muted,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-            const SizedBox(height: 5),
-            Text(
-              badge.description,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(
-                context,
-              ).textTheme.bodyMedium?.copyWith(fontSize: 12),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              badge.unlocked ? 'DÉBLOQUÉ' : 'À DÉBLOQUER',
-              style: TextStyle(
-                color: badge.unlocked ? color : AppColors.muted,
-                fontSize: 10,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class _JourneyCard extends StatelessWidget {
   const _JourneyCard({required this.controller});
 
@@ -346,32 +340,5 @@ class _JourneyCard extends StatelessWidget {
         ],
       ),
     );
-  }
-}
-
-IconData _badgeIcon(String name) {
-  switch (name) {
-    case 'flag':
-      return Icons.flag_rounded;
-    case 'explore':
-      return Icons.explore_rounded;
-    case 'map':
-      return Icons.map_rounded;
-    case 'satellite':
-      return Icons.satellite_alt_rounded;
-    case 'star':
-      return Icons.star_rounded;
-    case 'fire':
-      return Icons.local_fire_department_rounded;
-    case 'quiz':
-      return Icons.quiz_rounded;
-    case 'trophy':
-      return Icons.emoji_events_rounded;
-    case 'bolt':
-      return Icons.bolt_rounded;
-    case 'crown':
-      return Icons.workspace_premium_rounded;
-    default:
-      return Icons.lock_rounded;
   }
 }

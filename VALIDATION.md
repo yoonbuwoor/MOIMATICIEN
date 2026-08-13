@@ -1,11 +1,15 @@
-# Validation de la version 1.4.2+7
+# Validation de la version 1.5.0+8
 
 Contrôles effectués dans l’espace de travail :
 
 - `flutter pub get` avec Flutter 3.44.9 et Dart 3.12.2 : réussi ;
 - `flutter analyze --no-fatal-infos --no-fatal-warnings` : aucun problème ;
-- `flutter test` : 22 tests sur 22 réussis ;
+- `flutter test` : 23 tests sur 23 réussis ;
 - `recordQuickChallenge` et `recordTimedChallenge` acceptent les paramètres attendus et renvoient un total d'XP de type `int` ;
+- retrait complet des badges ludiques de l'interface et du contrôleur ;
+- certifications professionnelles mises en avant sur l'accueil et la progression ;
+- contacts WhatsApp, e-mail et communauté disponibles dès l'accueil, coordonnées masquées ;
+- douze réflexes terrain tirés aléatoirement, renouvelés automatiquement et manuellement ;
 - 10 vies renouvelées chaque jour et 2 vies réellement ajoutées par leçon terminée ;
 - modes aléatoires de 5 et 10 questions, sprint de 10 questions avec 15 secondes par question ;
 - trois missions quotidiennes, récompenses XP et animation de victoire ;

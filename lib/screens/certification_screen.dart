@@ -108,7 +108,7 @@ class _CertificationScreenState extends State<CertificationScreen> {
               children: [
                 const ScreenHeading(
                   eyebrow: 'Passez à l’étape suivante',
-                  title: 'Certifications Novateur221',
+                  title: 'Certifications professionnelles',
                   subtitle:
                       'Des parcours sur demande, adaptés aux métiers et aux réalités de chaque secteur.',
                 ),
@@ -326,7 +326,7 @@ class _HowItWorksCard extends StatelessWidget {
                   SizedBox(width: 9),
                   Expanded(
                     child: Text(
-                      'Les badges ludiques de l’application ne constituent pas une certification professionnelle.',
+                      'Chaque certification professionnelle suit un parcours convenu, une évaluation et des critères de réussite communiqués avant l’inscription.',
                       style: TextStyle(
                         color: Color(0xFF744600),
                         fontSize: 12,

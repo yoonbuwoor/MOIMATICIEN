@@ -1,7 +1,11 @@
+import 'dart:async';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 import '../data/course_catalog.dart';
 import '../models/learning_models.dart';
+import '../services/external_links.dart';
 import '../state/app_controller.dart';
 import '../theme/app_theme.dart';
 import '../widgets/learning_widgets.dart';
@@ -65,7 +69,7 @@ class HomeScreen extends StatelessWidget {
                       level: controller.level,
                       xp: controller.xp,
                       streakDays: controller.streakDays,
-                      badgeCount: controller.unlockedBadgeCount,
+                      lives: controller.lives,
                     ),
                     const SizedBox(height: 28),
                     SectionTitle(
@@ -114,6 +118,8 @@ class HomeScreen extends StatelessWidget {
                     _CertificationTeaser(
                       onOpenCertifications: onOpenCertifications,
                     ),
+                    const SizedBox(height: 16),
+                    const _HomeContactCard(),
                     const SizedBox(height: 16),
                     const _FieldTip(),
                   ],
@@ -168,7 +174,7 @@ class _CertificationTeaser extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   const Text(
-                    'NOUVEAU • CERTIFICATIONS',
+                    'CERTIFICATIONS PROFESSIONNELLES',
                     style: TextStyle(
                       color: AppColors.coral,
                       fontSize: 10,
@@ -178,7 +184,7 @@ class _CertificationTeaser extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   const Text(
-                    'Faites reconnaître vos compétences.',
+                    'Valorisez vos compétences métier.',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 21,
@@ -386,7 +392,7 @@ class _ProgressPanel extends StatelessWidget {
     required this.level,
     required this.xp,
     required this.streakDays,
-    required this.badgeCount,
+    required this.lives,
   });
 
   final int completedCount;
@@ -396,7 +402,7 @@ class _ProgressPanel extends StatelessWidget {
   final int level;
   final int xp;
   final int streakDays;
-  final int badgeCount;
+  final int lives;
 
   @override
   Widget build(BuildContext context) {
@@ -488,9 +494,9 @@ class _ProgressPanel extends StatelessWidget {
                 ),
                 Expanded(
                   child: _MiniReward(
-                    icon: Icons.workspace_premium_rounded,
-                    value: '$badgeCount',
-                    color: AppColors.success,
+                    icon: Icons.favorite_rounded,
+                    value: '$lives vies',
+                    color: AppColors.red,
                   ),
                 ),
               ],
@@ -570,8 +576,142 @@ class _CompletionCard extends StatelessWidget {
   }
 }
 
-class _FieldTip extends StatelessWidget {
+class _HomeContactCard extends StatelessWidget {
+  const _HomeContactCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(18),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const CircleAvatar(
+                  backgroundColor: AppColors.softRose,
+                  foregroundColor: AppColors.burgundy,
+                  child: Icon(Icons.support_agent_rounded),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Novateur221 à votre écoute',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        'Contact direct ou échanges avec la communauté géomatique.',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton.icon(
+                onPressed: () => openExternalLink(
+                  context,
+                  ExternalLinks.generalWhatsApp,
+                  failureMessage:
+                      'WhatsApp ne peut pas être ouvert pour le moment.',
+                ),
+                icon: const Icon(Icons.chat_rounded),
+                label: const Text('WhatsApp direct'),
+              ),
+            ),
+            const SizedBox(height: 10),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: () => openExternalLink(
+                  context,
+                  ExternalLinks.generalEmail,
+                  failureMessage: 'Aucune application e-mail disponible.',
+                ),
+                icon: const Icon(Icons.mail_outline_rounded),
+                label: const Text('E-mail'),
+              ),
+            ),
+            const SizedBox(height: 10),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: () => openExternalLink(
+                  context,
+                  ExternalLinks.community,
+                  failureMessage:
+                      'Le lien de la communauté ne peut pas être ouvert.',
+                ),
+                icon: const Icon(Icons.groups_rounded),
+                label: const Text('Rejoindre la communauté'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _FieldTip extends StatefulWidget {
   const _FieldTip();
+
+  @override
+  State<_FieldTip> createState() => _FieldTipState();
+}
+
+class _FieldTipState extends State<_FieldTip> {
+  static const _tips = <String>[
+    'Une coordonnée sans système de référence est incomplète. Notez toujours le code EPSG.',
+    'Avant le terrain, téléchargez les fonds hors ligne et testez le formulaire sur un point fictif.',
+    'Photographiez le site avec une orientation claire et reliez chaque photo à un identifiant de point.',
+    'Contrôlez la date, l’heure, l’unité et le format des champs avant de commencer la collecte.',
+    'Ne modifiez jamais les données brutes : travaillez sur une copie et conservez une sauvegarde séparée.',
+    'Un point GNSS isolé ne suffit pas : vérifiez la précision annoncée, l’environnement et la stabilité.',
+    'Après quelques observations, relisez immédiatement les valeurs pour détecter une erreur répétitive.',
+    'Documentez les obstacles, incidents et changements de méthode dans le carnet de terrain.',
+    'Avant de quitter la zone, comptez les objets collectés et comparez-les à la feuille de mission.',
+    'Respectez les personnes, les autorisations d’accès et la confidentialité des informations relevées.',
+    'Pour un contrôle indépendant, séparez les points servant au calcul de ceux servant à la validation.',
+    'Au retour, faites deux copies des données avant tout renommage, nettoyage ou traitement.',
+  ];
+
+  final Random _random = Random();
+  Timer? _timer;
+  int _tipIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _tipIndex = _random.nextInt(_tips.length);
+    _timer = Timer.periodic(
+      const Duration(seconds: 12),
+      (_) => _showAnotherTip(),
+    );
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void _showAnotherTip() {
+    if (!mounted || _tips.length < 2) return;
+    var next = _random.nextInt(_tips.length);
+    while (next == _tipIndex) {
+      next = _random.nextInt(_tips.length);
+    }
+    setState(() => _tipIndex = next);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -581,34 +721,54 @@ class _FieldTip extends StatelessWidget {
         color: AppColors.ink,
         borderRadius: BorderRadius.circular(24),
       ),
-      child: const Row(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CircleAvatar(
+          const CircleAvatar(
             backgroundColor: AppColors.coral,
             foregroundColor: Colors.white,
             child: Icon(Icons.lightbulb_rounded),
           ),
-          SizedBox(width: 14),
+          const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Réflexe du terrain',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w800,
-                  ),
+                Row(
+                  children: [
+                    const Expanded(
+                      child: Text(
+                        'Réflexes terrain',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      tooltip: 'Afficher un autre réflexe',
+                      onPressed: _showAnotherTip,
+                      visualDensity: VisualDensity.compact,
+                      color: AppColors.coral,
+                      icon: const Icon(Icons.shuffle_rounded),
+                    ),
+                  ],
                 ),
-                SizedBox(height: 6),
-                Text(
-                  'Une coordonnée sans système de référence est une information incomplète. Notez toujours le code EPSG.',
-                  style: TextStyle(
-                    color: Color(0xFFD8CDD3),
-                    fontSize: 13,
-                    height: 1.45,
+                const SizedBox(height: 3),
+                SizedBox(
+                  key: const ValueKey<String>('field-tip-text'),
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 350),
+                    child: Text(
+                      _tips[_tipIndex],
+                      key: ValueKey<int>(_tipIndex),
+                      style: const TextStyle(
+                        color: Color(0xFFD8CDD3),
+                        fontSize: 13,
+                        height: 1.45,
+                      ),
+                    ),
                   ),
                 ),
               ],

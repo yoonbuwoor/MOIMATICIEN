@@ -38,6 +38,24 @@ abstract class ExternalLinks {
   static Uri get generalCertificationEmail =>
       certificationEmail('parcours adapté à mon secteur');
 
+  static Uri get generalWhatsApp => Uri.https('wa.me', '/$_contactNumber', <
+    String,
+    String
+  >{
+    'text':
+        'Bonjour Novateur221, je vous contacte depuis l’application Moi Géomaticien.',
+  });
+
+  static Uri get generalEmail => Uri(
+    scheme: 'mailto',
+    path: _contactEmail,
+    query: _encodeQueryParameters(<String, String>{
+      'subject': 'Contact depuis Moi Géomaticien',
+      'body':
+          'Bonjour Novateur221,\n\nJe vous contacte depuis l’application Moi Géomaticien.\n\nCordialement,',
+    }),
+  );
+
   static String _encodeQueryParameters(Map<String, String> params) => params
       .entries
       .map(

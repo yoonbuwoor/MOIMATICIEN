@@ -34,12 +34,6 @@ void main() {
     expect(reward, greaterThan(0));
     expect(controller.bestScoreFor('quiz_carto'), 80);
     expect(controller.xp, reward);
-    expect(
-      controller.badges
-          .firstWhere((badge) => badge.id == 'cartographer')
-          .unlocked,
-      isTrue,
-    );
   });
 
   test('une série inactive depuis plus d’un jour revient à zéro', () async {

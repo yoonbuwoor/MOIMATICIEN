@@ -2,7 +2,7 @@
 
 Application Flutter d’apprentissage de la géomatique créée par **Novateur221**.
 
-## Version ludique 1.4
+## Version professionnelle 1.5
 
 - 34 cours illustrés disponibles hors ligne ;
 - 680 questions réparties en 34 quiz thématiques de 20 questions ;
@@ -14,9 +14,9 @@ Application Flutter d’apprentissage de la géomatique créée par **Novateur22
 - 10 vies offertes chaque jour (les 10 lettres de « géomatique ») et 2 vies gagnées par leçon terminée ;
 - rappels locaux automatiquement programmés toutes les 12 heures ;
 - interface mobile claire, responsive et sans compte utilisateur ;
-- espace **Certifications** avec 12 parcours adaptés à différents secteurs ;
-- demandes sur mesure par WhatsApp ou e-mail, coordonnées masquées dans l’interface ;
-- accès direct à la communauté WhatsApp Novateur221 ;
+- espace **Certifications professionnelles** avec 12 parcours adaptés à différents secteurs ;
+- accès dès l’accueil à WhatsApp, l’e-mail et la communauté, sans afficher les coordonnées ;
+- douze réflexes terrain affichés aléatoirement et renouvelés automatiquement ;
 - temps de lecture réalistes calculés automatiquement selon le nombre de mots ;
 - module drone compact de 4 parties et renvoi vers Drone Atlas Academy ;
 - politique de confidentialité dédiée, prête à publier sur Netlify ;
@@ -88,7 +88,7 @@ Le workflow `.github/workflows/main.yml` compile automatiquement **l’APK et l�
 
 - Nom public : `Moi Géomaticien`
 - Package : `com.novateur221.moi_geomaticien`
-- Version : `1.4.2+7`
+- Version : `1.5.0+8`
 - Android minimum : `7.0 (API 24)`
 
 ## Modifier les contenus

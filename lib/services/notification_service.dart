@@ -55,7 +55,7 @@ class NotificationService {
       ],
       [
         'Défi cartographique du jour',
-        'Testez vos connaissances et débloquez un nouveau badge.',
+        'Testez vos connaissances et avancez vers votre prochain objectif.',
       ],
       [
         'Cap sur le niveau suivant !',

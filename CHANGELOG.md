@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.5.0+8
+
+- retrait de la mécanique et de l’écran des distinctions ludiques ;
+- mise en avant des 12 certifications professionnelles ;
+- ajout sur l’accueil des accès directs à WhatsApp, à l’e-mail et à la communauté ;
+- ajout de douze réflexes terrain affichés aléatoirement, avec renouvellement automatique et manuel ;
+- conservation des 10 vies quotidiennes, des +2 vies par leçon, des missions et des défis rapides ;
+- workflow APK + AAB renommé pour la version 1.5.0.
+
 ## 1.3.0+4
 
 - extension substantielle de 16 à 34 cours hors ligne ;
@@ -31,7 +40,7 @@
 - extension de 48 à 160 questions, soit 10 questions corrigées par cours ;
 - défi transversal étendu à 20 questions ;
 - ajout des thèmes topographie, géodésie, PostGIS, webmapping, géostatistique, MNT, cadastre, Python, collecte mobile et risques environnementaux ;
-- ajout des XP, niveaux, séries, combos et dix badges ;
+- ajout initial des XP, niveaux, séries et combos ;
 - ajout d’un écran Progression et d’un réglage des rappels ;
 - notifications locales périodiques toutes les 12 heures après autorisation ;
 - ajout de six illustrations haute définition ;

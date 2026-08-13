@@ -3,26 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../data/course_catalog.dart';
 import '../models/learning_models.dart';
-
-class LearningBadge {
-  const LearningBadge({
-    required this.id,
-    required this.title,
-    required this.description,
-    required this.iconName,
-    required this.colorValue,
-    required this.unlocked,
-  });
-
-  final String id;
-  final String title;
-  final String description;
-  final String iconName;
-  final int colorValue;
-  final bool unlocked;
-}
 
 class DailyMission {
   const DailyMission({
@@ -152,93 +133,6 @@ class AppController extends ChangeNotifier {
   double courseProgress(int totalCourses) => totalCourses == 0
       ? 0.0
       : (_completedCourseIds.length / totalCourses).clamp(0.0, 1.0).toDouble();
-
-  List<LearningBadge> get badges => <LearningBadge>[
-    LearningBadge(
-      id: 'first_course',
-      title: 'Premiers pas',
-      description: 'Terminer un premier cours.',
-      iconName: 'flag',
-      colorValue: 0xFFEC1745,
-      unlocked: _completedCourseIds.isNotEmpty,
-    ),
-    LearningBadge(
-      id: 'five_courses',
-      title: 'Explorateur',
-      description: 'Terminer cinq cours.',
-      iconName: 'explore',
-      colorValue: 0xFFFF6338,
-      unlocked: _completedCourseIds.length >= 5,
-    ),
-    LearningBadge(
-      id: 'cartographer',
-      title: 'Cartographe',
-      description: 'Obtenir au moins 80 % en cartographie.',
-      iconName: 'map',
-      colorValue: 0xFF8A124B,
-      unlocked: (_bestQuizPercentages['quiz_carto'] ?? 0) >= 80,
-    ),
-    LearningBadge(
-      id: 'precision',
-      title: 'Précision GNSS',
-      description: 'Obtenir au moins 80 % au quiz GNSS.',
-      iconName: 'satellite',
-      colorValue: 0xFF5A0B68,
-      unlocked: (_bestQuizPercentages['quiz_gnss'] ?? 0) >= 80,
-    ),
-    LearningBadge(
-      id: 'perfect',
-      title: 'Sans faute',
-      description: 'Réaliser un score parfait.',
-      iconName: 'star',
-      colorValue: 0xFFF59E0B,
-      unlocked: _bestQuizPercentages.values.any((score) => score == 100),
-    ),
-    LearningBadge(
-      id: 'streak',
-      title: 'Assidu',
-      description: 'Apprendre trois jours de suite.',
-      iconName: 'fire',
-      colorValue: 0xFFFF6338,
-      unlocked: _streakDays >= 3,
-    ),
-    LearningBadge(
-      id: 'quiz_fan',
-      title: 'Esprit quiz',
-      description: 'Tenter huit quiz différents.',
-      iconName: 'quiz',
-      colorValue: 0xFFB40B4C,
-      unlocked: _bestQuizPercentages.length >= 8,
-    ),
-    LearningBadge(
-      id: 'challenge',
-      title: 'Grand défi',
-      description: 'Atteindre 70 % au défi du géomaticien.',
-      iconName: 'trophy',
-      colorValue: 0xFF168A65,
-      unlocked: (_bestQuizPercentages['defi_geomaticien'] ?? 0) >= 70,
-    ),
-    LearningBadge(
-      id: 'expert',
-      title: 'Expert en devenir',
-      description: 'Accumuler 3 000 XP.',
-      iconName: 'bolt',
-      colorValue: 0xFF7E063F,
-      unlocked: _xp >= 3000,
-    ),
-    LearningBadge(
-      id: 'master',
-      title: 'Maître géomaticien',
-      description: 'Terminer tout le parcours.',
-      iconName: 'crown',
-      colorValue: 0xFF241620,
-      unlocked: CourseCatalog.courses.every(
-        (course) => _completedCourseIds.contains(course.id),
-      ),
-    ),
-  ];
-
-  int get unlockedBadgeCount => badges.where((badge) => badge.unlocked).length;
 
   Future<int> markCourseCompleted(String courseId) async {
     if (!_completedCourseIds.add(courseId)) return 0;
