@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../data/quiz_catalog.dart';
 import '../models/learning_models.dart';
+import '../services/external_links.dart';
 import '../state/app_controller.dart';
 import '../theme/app_theme.dart';
 import 'quiz_screen.dart';
@@ -157,6 +158,10 @@ class CourseDetailScreen extends StatelessWidget {
                       if (index != course.sections.length - 1)
                         const SizedBox(height: 12),
                     ],
+                    if (course.id == 'photogrammetrie_drone') ...[
+                      const SizedBox(height: 18),
+                      const _DroneAtlasAcademyCard(),
+                    ],
                     const SizedBox(height: 26),
                     _QuizInvitation(
                       accent: accent,
@@ -207,6 +212,75 @@ class CourseDetailScreen extends StatelessWidget {
             );
           },
         ),
+      ),
+    );
+  }
+}
+
+class _DroneAtlasAcademyCard extends StatelessWidget {
+  const _DroneAtlasAcademyCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF241620), Color(0xFF650238)],
+        ),
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Row(
+            children: [
+              CircleAvatar(
+                backgroundColor: AppColors.coral,
+                foregroundColor: Colors.white,
+                child: Icon(Icons.flight_takeoff_rounded),
+              ),
+              SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'Allez plus loin avec Drone Atlas Academy',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 17,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          const Text(
+            'Télécharger l’application Drone Atlas Academy pour en connaître plus.',
+            style: TextStyle(
+              color: Color(0xFFE8DCE2),
+              fontSize: 13,
+              height: 1.45,
+            ),
+          ),
+          const SizedBox(height: 15),
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton.icon(
+              onPressed: () => openExternalLink(
+                context,
+                ExternalLinks.droneAtlasAcademy,
+                failureMessage:
+                    'La page de Drone Atlas Academy ne peut pas être ouverte.',
+              ),
+              style: FilledButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: AppColors.burgundy,
+              ),
+              icon: const Icon(Icons.download_rounded),
+              label: const Text('Télécharger Drone Atlas Academy'),
+            ),
+          ),
+        ],
       ),
     );
   }

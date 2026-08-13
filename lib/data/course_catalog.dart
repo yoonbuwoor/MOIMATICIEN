@@ -326,9 +326,9 @@ abstract class CourseCatalog {
       subtitle:
           'Du plan de vol à l’orthomosaïque, au nuage de points et au contrôle qualité.',
       category: 'Drone',
-      durationMinutes: 36,
+      durationMinutes: 52,
       level: CourseLevel.intermediaire,
-      imageAsset: 'assets/images/teledetection.webp',
+      imageAsset: 'assets/images/drone_photogrammetry.png',
       accentValue: 0xFF7E063F,
       objectives: [
         'Préparer une acquisition avec un recouvrement adapté',
@@ -378,6 +378,54 @@ abstract class CourseCatalog {
             'Documenter le GSD, le référentiel, la date, le capteur et le logiciel.',
             'Ne pas confondre précision relative et précision absolue.',
           ],
+        ),
+        CourseSection(
+          title: '5. Cadre légal, autorisations et sécurité',
+          body:
+              'Une mission commence par la vérification des règles applicables au lieu, à la hauteur, au type d’opération et aux personnes survolées. Les exigences varient selon le pays et peuvent évoluer : l’autorité aéronautique compétente reste la référence. Le pilote doit aussi protéger la vie privée, anticiper les obstacles et définir une zone d’exclusion au sol.',
+          keyPoints: [
+            'Vérifier les restrictions de l’espace aérien et obtenir les autorisations nécessaires.',
+            'Ne jamais survoler une foule et préserver une marge sûre autour des personnes et obstacles.',
+            'Préparer une procédure d’urgence, un point de décollage sécurisé et un observateur si nécessaire.',
+            'Informer les propriétaires et limiter les images aux besoins réels de la mission.',
+          ],
+          fieldNote:
+              'La carte d’une application ne remplace jamais les consignes de l’autorité aéronautique ni l’observation du site.',
+        ),
+        CourseSection(
+          title: '6. Plan de mission et contraintes réelles',
+          body:
+              'Le plan de vol traduit le besoin cartographique en trajectoires, hauteur, vitesse, recouvrements et orientation de caméra. Le relief, le vent, la température, l’autonomie des batteries, les lignes électriques et les zones sans positionnement fiable peuvent imposer une adaptation. Une reconnaissance du site permet de valider les hypothèses avant le décollage.',
+          keyPoints: [
+            'Calculer la hauteur à partir du GSD visé et conserver une distance sûre au terrain.',
+            'Augmenter le recouvrement sur les reliefs, la végétation dense ou les scènes complexes.',
+            'Prévoir les batteries avec une réserve et interrompre la mission si les conditions deviennent défavorables.',
+            'Utiliser des passes croisées ou obliques lorsque la reconstruction des façades est nécessaire.',
+          ],
+        ),
+        CourseSection(
+          title: '7. Traitement photogrammétrique reproductible',
+          body:
+              'Le traitement suit généralement l’alignement des images, l’optimisation des caméras, la densification, la classification du nuage, la création des modèles de surface puis l’orthorectification. Chaque étape doit être contrôlée avant de lancer la suivante afin d’éviter de propager une erreur ou de gaspiller du temps de calcul.',
+          keyPoints: [
+            'Écarter les images floues ou incohérentes après une inspection méthodique.',
+            'Vérifier la couverture, les résidus de calibration et la distribution des points homologues.',
+            'Classer le sol avec prudence avant de produire un MNT.',
+            'Conserver les paramètres, versions logicielles et journaux de traitement.',
+          ],
+        ),
+        CourseSection(
+          title: '8. Livrables, précision et rapport de mission',
+          body:
+              'Un livrable utile ne se résume pas à une image. Il comprend les produits adaptés au besoin, leur système de référence, leur résolution, la méthode de traitement, les limites et les résultats de contrôle. L’erreur quadratique moyenne sur des checkpoints indépendants peut résumer la précision, mais elle doit être accompagnée du nombre et de la répartition des points.',
+          keyPoints: [
+            'Livrer uniquement les produits validés : orthomosaïque, nuage, MNS, MNT, courbes ou modèle 3D selon le mandat.',
+            'Indiquer les unités, le SCR horizontal, le référentiel vertical et la date d’acquisition.',
+            'Présenter les erreurs par axe et localiser les zones moins fiables.',
+            'Archiver les données sources selon une politique de sécurité et de conservation définie.',
+          ],
+          fieldNote:
+              'Pour approfondir les missions, la réglementation et les outils drone, téléchargez l’application Drone Atlas Academy.',
         ),
       ],
     ),

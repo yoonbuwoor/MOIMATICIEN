@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light">
+    <meta name="theme-color" content="#650238">
+    <meta
+      name="description"
+      content="Politique de confidentialité de l’application Moi Géomaticien par Novateur221."
+    >
+    <title>Politique de confidentialité — Moi Géomaticien</title>
+    <style>
+      :root {
+        --plum: #650238;
+        --deep-plum: #3d062e;
+        --coral: #ff6338;
+        --ink: #241620;
+        --muted: #74666f;
+        --canvas: #fff8f5;
+        --rose: #ffeae5;
+        --line: #ecdde2;
+        --success: #168a65;
+      }
+
+      * { box-sizing: border-box; }
+
+      html { scroll-behavior: smooth; }
+
+      body {
+        margin: 0;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 12% 0%, #ffe2d8 0, transparent 28rem),
+          var(--canvas);
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        line-height: 1.65;
+      }
+
+      a { color: inherit; }
+
+      .hero {
+        position: relative;
+        overflow: hidden;
+        color: #fff;
+        background: linear-gradient(135deg, var(--deep-plum), var(--plum) 62%, #9d0b48);
+      }
+
+      .hero::after {
+        content: "";
+        position: absolute;
+        width: 25rem;
+        height: 25rem;
+        right: -9rem;
+        top: -12rem;
+        border: 4rem solid rgb(255 255 255 / 7%);
+        border-radius: 50%;
+      }
+
+      .hero-inner,
+      main,
+      footer {
+        width: min(100% - 2rem, 920px);
+        margin-inline: auto;
+      }
+
+      .hero-inner {
+        position: relative;
+        z-index: 1;
+        padding: 4.5rem 0 4rem;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: .65rem;
+        margin-bottom: 2rem;
+        font-size: .78rem;
+        font-weight: 850;
+        letter-spacing: .09em;
+        text-transform: uppercase;
+      }
+
+      .brand-mark {
+        display: grid;
+        width: 2.25rem;
+        height: 2.25rem;
+        place-items: center;
+        border-radius: .75rem;
+        background: var(--coral);
+        font-size: 1.1rem;
+      }
+
+      .eyebrow {
+        margin: 0 0 .6rem;
+        color: #ffb7a4;
+        font-size: .72rem;
+        font-weight: 900;
+        letter-spacing: .13em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        max-width: 740px;
+        margin: 0;
+        font-size: clamp(2.25rem, 7vw, 4.4rem);
+        line-height: 1.02;
+        letter-spacing: -.045em;
+      }
+
+      .hero p:last-child {
+        max-width: 650px;
+        margin: 1.3rem 0 0;
+        color: #eadce4;
+        font-size: 1.04rem;
+      }
+
+      main { padding: 2.4rem 0 4rem; }
+
+      .summary {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        padding: 1.25rem;
+        border: 1px solid #bfe4d6;
+        border-radius: 1.25rem;
+        background: #eefaf5;
+      }
+
+      .summary-icon {
+        display: grid;
+        width: 2.8rem;
+        height: 2.8rem;
+        place-items: center;
+        color: #fff;
+        border-radius: .9rem;
+        background: var(--success);
+        font-size: 1.25rem;
+      }
+
+      .summary strong { display: block; margin-bottom: .2rem; }
+      .summary p { margin: 0; color: #3d6556; }
+
+      nav {
+        display: flex;
+        gap: .55rem;
+        overflow-x: auto;
+        margin-bottom: 2rem;
+        padding-bottom: .35rem;
+        scrollbar-width: thin;
+      }
+
+      nav a {
+        flex: 0 0 auto;
+        padding: .55rem .85rem;
+        color: var(--plum);
+        border: 1px solid #dfc2cd;
+        border-radius: 999px;
+        background: #fff;
+        font-size: .82rem;
+        font-weight: 750;
+        text-decoration: none;
+      }
+
+      section {
+        margin-bottom: 1rem;
+        padding: clamp(1.25rem, 4vw, 2rem);
+        border: 1px solid var(--line);
+        border-radius: 1.5rem;
+        background: rgb(255 255 255 / 92%);
+        box-shadow: 0 1rem 2.7rem rgb(101 2 56 / 5%);
+      }
+
+      h2 {
+        margin: 0 0 .7rem;
+        font-size: clamp(1.25rem, 4vw, 1.65rem);
+        line-height: 1.2;
+        letter-spacing: -.02em;
+      }
+
+      h3 { margin: 1.35rem 0 .35rem; font-size: 1rem; }
+
+      p { margin: .5rem 0; }
+      section p, li { color: var(--muted); }
+      ul { margin: .65rem 0 0; padding-left: 1.2rem; }
+      li + li { margin-top: .42rem; }
+
+      .tag {
+        display: inline-block;
+        margin-bottom: .8rem;
+        padding: .3rem .65rem;
+        color: var(--plum);
+        border-radius: 999px;
+        background: var(--rose);
+        font-size: .7rem;
+        font-weight: 850;
+        letter-spacing: .05em;
+        text-transform: uppercase;
+      }
+
+      .contact-card {
+        color: #fff;
+        border: 0;
+        background: linear-gradient(135deg, var(--ink), var(--plum));
+      }
+
+      .contact-card p { color: #e9dce3; }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 3rem;
+        margin-top: 1rem;
+        padding: .7rem 1rem;
+        color: var(--plum);
+        border-radius: .9rem;
+        background: #fff;
+        font-weight: 850;
+        text-decoration: none;
+      }
+
+      footer {
+        padding: 0 0 3rem;
+        color: var(--muted);
+        font-size: .82rem;
+        text-align: center;
+      }
+
+      @media (max-width: 560px) {
+        .hero-inner { padding: 3.2rem 0 3rem; }
+        .summary { grid-template-columns: 1fr; }
+        section { border-radius: 1.2rem; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="hero">
+      <div class="hero-inner">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">N</span>
+          <span>Moi Géomaticien · by Novateur221</span>
+        </div>
+        <p class="eyebrow">Vos données, clairement expliquées</p>
+        <h1>Politique de confidentialité</h1>
+        <p>
+          Cette page explique simplement quelles données l’application utilise,
+          où elles restent et ce qui se passe lorsque vous choisissez de nous contacter.
+        </p>
+      </div>
+    </header>
+
+    <main>
+      <div class="summary" role="note" aria-label="Résumé de confidentialité">
+        <span class="summary-icon" aria-hidden="true">✓</span>
+        <div>
+          <strong>L’essentiel</strong>
+          <p>
+            La version actuelle de Moi Géomaticien fonctionne sans compte. La progression
+            pédagogique reste sur l’appareil et les rappels sont des notifications locales.
+          </p>
+        </div>
+      </div>
+
+      <nav aria-label="Sommaire">
+        <a href="#responsable">Responsable</a>
+        <a href="#donnees">Données</a>
+        <a href="#certifications">Certifications</a>
+        <a href="#liens">Services externes</a>
+        <a href="#droits">Vos droits</a>
+      </nav>
+
+      <section id="responsable">
+        <span class="tag">1 · Responsable</span>
+        <h2>Qui est responsable de l’application ?</h2>
+        <p>
+          Moi Géomaticien est une application pédagogique éditée par Novateur221.
+          La présente politique concerne l’application mobile Moi Géomaticien et ses
+          fonctions de cours, quiz, progression, rappels et demande de certification.
+        </p>
+        <p><strong>Dernière mise à jour :</strong> 13 août 2026.</p>
+      </section>
+
+      <section id="donnees">
+        <span class="tag">2 · Sur votre appareil</span>
+        <h2>Données utilisées par l’application</h2>
+        <p>
+          Afin d’afficher votre progression et de rendre l’apprentissage ludique,
+          l’application enregistre localement :
+        </p>
+        <ul>
+          <li>les cours marqués comme terminés ;</li>
+          <li>les meilleurs résultats aux quiz ;</li>
+          <li>les points d’expérience, le niveau, la série et les badges ;</li>
+          <li>le choix d’activer ou non les rappels.</li>
+        </ul>
+        <p>
+          Ces informations sont stockées sur l’appareil par l’application. Dans cette
+          version, elles ne sont pas rattachées à un compte utilisateur et ne sont pas
+          envoyées à Novateur221. La suppression des données de l’application ou sa
+          désinstallation peut effacer cette progression.
+        </p>
+
+        <h3>Notifications</h3>
+        <p>
+          Si vous donnez votre accord, Moi Géomaticien programme un rappel local environ
+          toutes les douze heures. Vous pouvez refuser l’autorisation au premier lancement,
+          désactiver les rappels dans l’écran Progression ou modifier l’autorisation dans
+          les réglages du téléphone.
+        </p>
+      </section>
+
+      <section id="certifications">
+        <span class="tag">3 · Contact volontaire</span>
+        <h2>Demandes de certification</h2>
+        <p>
+          L’application n’envoie aucune demande automatiquement. Lorsque vous appuyez sur
+          un bouton WhatsApp ou e-mail, un service externe s’ouvre avec un message préparé.
+          Vous décidez de le modifier et de l’envoyer.
+        </p>
+        <p>
+          Si vous nous contactez, Novateur221 reçoit les informations que vous choisissez
+          de fournir, par exemple votre nom, vos coordonnées, le module recherché, votre
+          niveau ou votre besoin professionnel. Elles servent à répondre à la demande,
+          proposer des modalités, organiser le parcours et assurer le suivi administratif
+          lorsqu’une inscription est confirmée.
+        </p>
+        <p>
+          Nous conservons ces informations pendant la durée nécessaire au traitement de la
+          demande et aux obligations applicables. Elles ne sont pas vendues. Ne transmettez
+          pas de donnée sensible qui n’est pas nécessaire à votre demande.
+        </p>
+      </section>
+
+      <section id="liens">
+        <span class="tag">4 · Services tiers</span>
+        <h2>Liens et applications externes</h2>
+        <p>
+          Certains boutons ouvrent WhatsApp, votre application de messagerie, Google Play
+          ou une page web, notamment pour la communauté Novateur221 et Drone Atlas Academy.
+          Une fois le service ouvert, son éditeur peut traiter des données selon ses propres
+          conditions et sa politique de confidentialité.
+        </p>
+        <p>
+          Moi Géomaticien n’a pas accès au contenu que vous décidez de transmettre dans ces
+          services, sauf lorsque vous l’adressez directement à Novateur221.
+        </p>
+      </section>
+
+      <section>
+        <span class="tag">5 · Sécurité & public</span>
+        <h2>Protection, mineurs et limites</h2>
+        <p>
+          Nous appliquons des mesures raisonnables pour limiter l’accès aux demandes reçues.
+          Aucun système n’offre toutefois une sécurité absolue. L’application est destinée
+          à l’apprentissage de la géomatique ; un mineur doit demander l’accord de son
+          représentant légal avant d’envoyer une demande de certification ou de rejoindre
+          une communauté externe.
+        </p>
+      </section>
+
+      <section id="droits" class="contact-card">
+        <span class="tag">6 · Vos choix</span>
+        <h2>Accès, rectification et suppression</h2>
+        <p>
+          Pour une information envoyée directement à Novateur221, vous pouvez demander
+          l’accès, la correction ou la suppression, sous réserve des obligations légales.
+          Décrivez votre demande et l’adresse utilisée lors du premier contact afin que nous
+          puissions la retrouver. Le bouton ci-dessous ouvre votre application e-mail sans
+          afficher l’adresse dans cette page.
+        </p>
+        <a class="button" id="privacy-contact" href="#droits">Exercer mes droits par e-mail</a>
+      </section>
+
+      <section>
+        <span class="tag">7 · Évolutions</span>
+        <h2>Modification de cette politique</h2>
+        <p>
+          Cette politique peut évoluer lorsque l’application ajoute une fonctionnalité ou
+          lorsqu’une exigence change. La date affichée en haut de la page permet d’identifier
+          la version applicable. Une modification importante sera signalée dans une prochaine
+          version de l’application lorsque cela est pertinent.
+        </p>
+      </section>
+    </main>
+
+    <footer>
+      © 2026 Novateur221 · Moi Géomaticien · Apprendre la géomatique avec méthode.
+    </footer>
+    <script>
+      (() => {
+        const contact = ["novateur221", "gmail.com"].join("@");
+        const subject = encodeURIComponent("Confidentialité — Moi Géomaticien");
+        document.getElementById("privacy-contact").href = `mailto:${contact}?subject=${subject}`;
+      })();
+    </script>
+  </body>
+</html>

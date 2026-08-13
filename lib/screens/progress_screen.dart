@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../data/course_catalog.dart';
 import '../services/notification_service.dart';
+import '../services/external_links.dart';
 import '../services/reminder_service.dart';
 import '../state/app_controller.dart';
 import '../theme/app_theme.dart';
@@ -132,6 +133,19 @@ class ProgressScreen extends StatelessWidget {
               ),
               const SizedBox(height: 14),
               _JourneyCard(controller: controller),
+              const SizedBox(height: 18),
+              Center(
+                child: TextButton.icon(
+                  onPressed: () => openExternalLink(
+                    context,
+                    ExternalLinks.privacy,
+                    failureMessage:
+                        'La politique de confidentialité ne peut pas être ouverte.',
+                  ),
+                  icon: const Icon(Icons.privacy_tip_outlined, size: 18),
+                  label: const Text('Politique de confidentialité'),
+                ),
+              ),
             ],
           );
         },

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../services/notification_service.dart';
 import '../services/reminder_service.dart';
 import '../state/app_controller.dart';
+import 'certification_screen.dart';
 import 'course_list_screen.dart';
 import 'home_screen.dart';
 import 'quiz_hub_screen.dart';
@@ -79,9 +80,11 @@ class _MainShellState extends State<MainShell> {
         controller: widget.controller,
         onOpenCourses: () => _selectTab(1),
         onOpenQuizzes: () => _selectTab(2),
+        onOpenCertifications: () => _selectTab(3),
       ),
       CourseListScreen(controller: widget.controller),
       QuizHubScreen(controller: widget.controller),
+      const CertificationScreen(),
       ProgressScreen(controller: widget.controller),
     ];
 
@@ -109,6 +112,11 @@ class _MainShellState extends State<MainShell> {
           NavigationDestination(
             icon: Icon(Icons.workspace_premium_outlined),
             selectedIcon: Icon(Icons.workspace_premium_rounded),
+            label: 'Certifs',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.workspace_premium_outlined),
+            selectedIcon: Icon(Icons.emoji_events_rounded),
             label: 'Progression',
           ),
         ],

@@ -1,4 +1,4 @@
-# Validation technique — Moi Géomaticien 1.1.0
+# Validation technique — Moi Géomaticien 1.2.0
 
 ## Contenu contrôlé
 
@@ -6,20 +6,23 @@
 - 160 questions uniques ;
 - 16 quiz thématiques de 10 questions ;
 - 1 défi transversal de 20 questions ;
-- 10 illustrations originales, dont 6 scènes haute définition ;
+- 12 illustrations originales, dont 8 scènes haute définition ;
+- 12 parcours de certification sectoriels ;
+- illustrations haute définition dédiées aux certifications et au drone ;
 - icônes Android générées pour les cinq densités standards.
 
 ## Contrôles réalisés
 
 - analyse syntaxique de tous les fichiers Dart : réussie ;
 - analyse Flutter 3.44.9 : aucun problème ;
-- dix tests unitaires et widgets : tous réussis ;
+- quatorze tests unitaires et widgets : tous réussis ;
 - unicité des identifiants de cours et de questions : contrôlée ;
 - cohérence des chemins d’assets : contrôlée ;
 - validation YAML du workflow GitHub Actions : réussie ;
 - validation XML des ressources Android : réussie ;
 - compilation Python du configurateur Android : réussie ;
-- absence de Firebase, d’API distante et de permission Internet dans le manifeste de production : contrôlée ;
+- absence de Firebase et d’API distante : contrôlée ;
+- permission Internet limitée à l’ouverture volontaire des liens externes : configurée ;
 - permission Android 13 pour les notifications et tâche périodique WorkManager : configurées ;
 - limite CI de 94 Mio pour APK et AAB : configurée.
 

@@ -12,12 +12,14 @@ class HomeScreen extends StatelessWidget {
     required this.controller,
     required this.onOpenCourses,
     required this.onOpenQuizzes,
+    required this.onOpenCertifications,
     super.key,
   });
 
   final AppController controller;
   final VoidCallback onOpenCourses;
   final VoidCallback onOpenQuizzes;
+  final VoidCallback onOpenCertifications;
 
   void _openCourse(BuildContext context, Course course) {
     Navigator.of(context).push<void>(
@@ -109,6 +111,10 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 26),
+                    _CertificationTeaser(
+                      onOpenCertifications: onOpenCertifications,
+                    ),
+                    const SizedBox(height: 16),
                     const _FieldTip(),
                   ],
                 ),
@@ -125,6 +131,79 @@ class HomeScreen extends StatelessWidget {
       if (!completed.contains(course.id)) return course;
     }
     return null;
+  }
+}
+
+class _CertificationTeaser extends StatelessWidget {
+  const _CertificationTeaser({required this.onOpenCertifications});
+
+  final VoidCallback onOpenCertifications;
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(26),
+      child: SizedBox(
+        height: 220,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Image.asset(
+              'assets/images/certifications_hero.png',
+              fit: BoxFit.cover,
+            ),
+            const DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: [Color(0xF2241620), Color(0x7A241620)],
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  const Text(
+                    'NOUVEAU • CERTIFICATIONS',
+                    style: TextStyle(
+                      color: AppColors.coral,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 0.8,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  const Text(
+                    'Faites reconnaître vos compétences.',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 21,
+                      height: 1.12,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  FilledButton.icon(
+                    onPressed: onOpenCertifications,
+                    style: FilledButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: AppColors.burgundy,
+                      minimumSize: const Size(0, 44),
+                    ),
+                    icon: const Icon(Icons.workspace_premium_rounded),
+                    label: const Text('Découvrir les parcours'),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 

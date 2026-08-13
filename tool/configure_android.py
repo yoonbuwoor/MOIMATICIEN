@@ -15,9 +15,13 @@ if manifest.exists():
         text,
         count=1,
     )
-    permission = '<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />'
-    if permission not in text:
-        text = text.replace('<manifest xmlns:android="http://schemas.android.com/apk/res/android">', '<manifest xmlns:android="http://schemas.android.com/apk/res/android">\n    ' + permission, 1)
+    permissions = (
+        '<uses-permission android:name="android.permission.INTERNET" />',
+        '<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />',
+    )
+    for permission in reversed(permissions):
+        if permission not in text:
+            text = text.replace('<manifest xmlns:android="http://schemas.android.com/apk/res/android">', '<manifest xmlns:android="http://schemas.android.com/apk/res/android">\n    ' + permission, 1)
     manifest.write_text(text, encoding='utf-8')
 
 icon_root = ROOT / 'tool' / 'icons'
