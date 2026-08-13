@@ -88,7 +88,7 @@ Le workflow `.github/workflows/main.yml` compile automatiquement **l’APK et l�
 
 - Nom public : `Moi Géomaticien`
 - Package : `com.novateur221.moi_geomaticien`
-- Version : `1.4.0+5`
+- Version : `1.4.1+6`
 - Android minimum : `7.0 (API 24)`
 
 ## Modifier les contenus

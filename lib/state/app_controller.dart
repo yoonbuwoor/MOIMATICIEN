@@ -301,6 +301,26 @@ class AppController extends ChangeNotifier {
     await _preferences.setInt(_livesKey, _lives);
   }
 
+  /// Compatibilité avec l'écran de défi rapide des premières versions 1.4.
+  Future<GameSessionReward> recordQuickChallenge() {
+    return recordGameSession(
+      mode: QuizPlayMode.quick,
+      correct: 0,
+      total: 1,
+      completed: true,
+    );
+  }
+
+  /// Compatibilité avec l'écran de défi chronométré des premières versions 1.4.
+  Future<GameSessionReward> recordTimedChallenge() {
+    return recordGameSession(
+      mode: QuizPlayMode.timed,
+      correct: 0,
+      total: 1,
+      completed: true,
+    );
+  }
+
   Future<GameSessionReward> recordGameSession({
     required QuizPlayMode mode,
     required int correct,

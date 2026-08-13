@@ -111,4 +111,22 @@ void main() {
 
     expect(controller.lives, 9);
   });
+
+  test('les anciennes méthodes de défi restent compatibles', () async {
+    SharedPreferences.setMockInitialValues(<String, Object>{});
+    final controller = await AppController.create();
+
+    final quickReward = await controller.recordQuickChallenge();
+    final timedReward = await controller.recordTimedChallenge();
+
+    expect(
+      quickReward.completedMissionTitles,
+      contains('Échauffement express'),
+    );
+    expect(
+      timedReward.completedMissionTitles,
+      contains('Plus vite que le GPS'),
+    );
+    expect(controller.completedDailyMissionCount, 2);
+  });
 }
