@@ -55,11 +55,7 @@ abstract class AppTheme {
           height: 1.25,
           fontWeight: FontWeight.w700,
         ),
-        bodyLarge: TextStyle(
-          color: AppColors.ink,
-          fontSize: 16,
-          height: 1.55,
-        ),
+        bodyLarge: TextStyle(color: AppColors.ink, fontSize: 16, height: 1.55),
         bodyMedium: TextStyle(
           color: AppColors.muted,
           fontSize: 14,
@@ -116,7 +112,10 @@ abstract class AppTheme {
         fillColor: Colors.white,
         hintStyle: const TextStyle(color: AppColors.muted),
         prefixIconColor: AppColors.burgundy,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),
           borderSide: const BorderSide(color: Color(0xFFF2E6E8)),

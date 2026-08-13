@@ -1,11 +1,12 @@
 import '../models/learning_models.dart';
+import 'extended_quiz_catalog.dart';
 
 abstract class QuizCatalog {
-  static const definitions = <QuizDefinition>[
+  static final List<QuizDefinition> definitions = <QuizDefinition>[
     QuizDefinition(
       id: 'quiz_bases',
       title: 'Bases de la géomatique',
-      subtitle: '8 questions • Fondamentaux',
+      subtitle: '10 questions • Fondamentaux',
       accentValue: 0xFFEC1745,
       iconName: 'explore',
       courseId: 'bases_geomatique',
@@ -13,7 +14,7 @@ abstract class QuizCatalog {
     QuizDefinition(
       id: 'quiz_carto',
       title: 'Cartographie',
-      subtitle: '8 questions • Échelle et sémiologie',
+      subtitle: '10 questions • Échelle et sémiologie',
       accentValue: 0xFFFF6338,
       iconName: 'map',
       courseId: 'cartographie',
@@ -21,7 +22,7 @@ abstract class QuizCatalog {
     QuizDefinition(
       id: 'quiz_sig',
       title: 'SIG et analyse spatiale',
-      subtitle: '8 questions • Couches et traitements',
+      subtitle: '10 questions • Couches et traitements',
       accentValue: 0xFF8A124B,
       iconName: 'layers',
       courseId: 'sig_qgis',
@@ -29,7 +30,7 @@ abstract class QuizCatalog {
     QuizDefinition(
       id: 'quiz_gnss',
       title: 'GNSS et coordonnées',
-      subtitle: '8 questions • Terrain et précision',
+      subtitle: '10 questions • Terrain et précision',
       accentValue: 0xFF5A0B68,
       iconName: 'satellite',
       courseId: 'gnss_coordonnees',
@@ -37,7 +38,7 @@ abstract class QuizCatalog {
     QuizDefinition(
       id: 'quiz_teledetection',
       title: 'Télédétection',
-      subtitle: '8 questions • Images et spectre',
+      subtitle: '10 questions • Images et spectre',
       accentValue: 0xFFB40B4C,
       iconName: 'image',
       courseId: 'teledetection',
@@ -45,21 +46,22 @@ abstract class QuizCatalog {
     QuizDefinition(
       id: 'quiz_photogrammetrie',
       title: 'Photogrammétrie drone',
-      subtitle: '8 questions • Acquisition et qualité',
+      subtitle: '10 questions • Acquisition et qualité',
       accentValue: 0xFF7E063F,
       iconName: 'drone',
       courseId: 'photogrammetrie_drone',
     ),
+    ...ExtendedQuizCatalog.definitions,
     QuizDefinition(
       id: 'defi_geomaticien',
       title: 'Défi du géomaticien',
-      subtitle: '12 questions • Tous les domaines',
+      subtitle: '20 questions • Tous les domaines',
       accentValue: 0xFF241620,
       iconName: 'trophy',
     ),
   ];
 
-  static const questions = <QuizQuestion>[
+  static final List<QuizQuestion> questions = <QuizQuestion>[
     QuizQuestion(
       id: 'b01',
       courseId: 'bases_geomatique',
@@ -77,8 +79,14 @@ abstract class QuizCatalog {
     QuizQuestion(
       id: 'b02',
       courseId: 'bases_geomatique',
-      question: 'Quel modèle convient le mieux pour représenter des parcelles cadastrales ?',
-      options: ['Raster', 'Polygones vectoriels', 'Texte brut', 'Nuage de mots'],
+      question:
+          'Quel modèle convient le mieux pour représenter des parcelles cadastrales ?',
+      options: [
+        'Raster',
+        'Polygones vectoriels',
+        'Texte brut',
+        'Nuage de mots',
+      ],
       correctIndex: 1,
       explanation:
           'Une parcelle est une surface délimitée : le polygone vectoriel conserve ses limites et ses attributs.',
@@ -95,8 +103,14 @@ abstract class QuizCatalog {
     QuizQuestion(
       id: 'b04',
       courseId: 'bases_geomatique',
-      question: 'Quel élément explique la source, la date et la précision d’une donnée ?',
-      options: ['La symbologie', 'Les métadonnées', 'Le fond de carte', 'Le zoom'],
+      question:
+          'Quel élément explique la source, la date et la précision d’une donnée ?',
+      options: [
+        'La symbologie',
+        'Les métadonnées',
+        'Le fond de carte',
+        'Le zoom',
+      ],
       correctIndex: 1,
       explanation:
           'Les métadonnées documentent l’origine, la méthode, le référentiel et les limites d’utilisation.',
@@ -104,7 +118,8 @@ abstract class QuizCatalog {
     QuizQuestion(
       id: 'b05',
       courseId: 'bases_geomatique',
-      question: 'Quelle action doit précéder le choix d’un capteur ou d’un logiciel ?',
+      question:
+          'Quelle action doit précéder le choix d’un capteur ou d’un logiciel ?',
       options: [
         'Définir le besoin et la décision à éclairer',
         'Créer immédiatement la légende',
@@ -147,7 +162,12 @@ abstract class QuizCatalog {
       id: 'b08',
       courseId: 'bases_geomatique',
       question: 'Une route est généralement représentée en vecteur par :',
-      options: ['Un point', 'Une ligne', 'Un pixel unique', 'Une étiquette seule'],
+      options: [
+        'Un point',
+        'Une ligne',
+        'Un pixel unique',
+        'Une étiquette seule',
+      ],
       correctIndex: 1,
       explanation:
           'Une ligne représente efficacement un objet allongé comme une route, une piste ou un cours d’eau.',
@@ -158,8 +178,7 @@ abstract class QuizCatalog {
       question: 'À l’échelle 1:50 000, 1 cm sur la carte représente :',
       options: ['50 m', '500 m', '5 km', '50 km'],
       correctIndex: 1,
-      explanation:
-          '50 000 cm correspondent à 500 m sur le terrain.',
+      explanation: '50 000 cm correspondent à 500 m sur le terrain.',
     ),
     QuizQuestion(
       id: 'c02',
@@ -193,7 +212,12 @@ abstract class QuizCatalog {
       id: 'c04',
       courseId: 'cartographie',
       question: 'Des courbes de niveau très rapprochées indiquent :',
-      options: ['Une pente forte', 'Une plaine parfaitement plate', 'Une route large', 'Une erreur de projection'],
+      options: [
+        'Une pente forte',
+        'Une plaine parfaitement plate',
+        'Une route large',
+        'Une erreur de projection',
+      ],
       correctIndex: 0,
       explanation:
           'L’altitude change fortement sur une courte distance : la pente est donc forte.',
@@ -201,7 +225,8 @@ abstract class QuizCatalog {
     QuizQuestion(
       id: 'c05',
       courseId: 'cartographie',
-      question: 'Pour représenter des catégories sans ordre, il est préférable d’utiliser :',
+      question:
+          'Pour représenter des catégories sans ordre, il est préférable d’utiliser :',
       options: [
         'Une gamme du clair au foncé',
         'Des teintes distinctes de valeur comparable',
@@ -216,7 +241,12 @@ abstract class QuizCatalog {
       id: 'c06',
       courseId: 'cartographie',
       question: 'Quel élément indique la signification des symboles ?',
-      options: ['La légende', 'Le cadre', 'Le format du papier', 'Le nom du fichier'],
+      options: [
+        'La légende',
+        'Le cadre',
+        'Le format du papier',
+        'Le nom du fichier',
+      ],
       correctIndex: 0,
       explanation:
           'La légende traduit les symboles et couleurs réellement présents sur la carte.',
@@ -252,7 +282,8 @@ abstract class QuizCatalog {
     QuizQuestion(
       id: 's01',
       courseId: 'sig_qgis',
-      question: 'Quel outil crée une zone à distance donnée autour d’un objet ?',
+      question:
+          'Quel outil crée une zone à distance donnée autour d’un objet ?',
       options: ['Découpage', 'Zone tampon', 'Dissolution', 'Géoréférencement'],
       correctIndex: 1,
       explanation:
@@ -261,8 +292,14 @@ abstract class QuizCatalog {
     QuizQuestion(
       id: 's02',
       courseId: 'sig_qgis',
-      question: 'Pour extraire les routes situées dans une commune, on utilise principalement :',
-      options: ['Clip / découpage', 'Tri alphabétique', 'Calculatrice simple', 'Rotation de la carte'],
+      question:
+          'Pour extraire les routes situées dans une commune, on utilise principalement :',
+      options: [
+        'Clip / découpage',
+        'Tri alphabétique',
+        'Calculatrice simple',
+        'Rotation de la carte',
+      ],
       correctIndex: 0,
       explanation:
           'Le découpage conserve les portions d’une couche présentes dans l’emprise choisie.',
@@ -298,7 +335,8 @@ abstract class QuizCatalog {
     QuizQuestion(
       id: 's05',
       courseId: 'sig_qgis',
-      question: 'Quelle règle topologique est pertinente pour des parcelles adjacentes ?',
+      question:
+          'Quelle règle topologique est pertinente pour des parcelles adjacentes ?',
       options: [
         'Elles ne doivent pas se chevaucher',
         'Elles doivent toutes avoir la même superficie',
@@ -312,7 +350,8 @@ abstract class QuizCatalog {
     QuizQuestion(
       id: 's06',
       courseId: 'sig_qgis',
-      question: 'Quel format ouvert peut contenir plusieurs couches dans un seul fichier ?',
+      question:
+          'Quel format ouvert peut contenir plusieurs couches dans un seul fichier ?',
       options: ['GeoPackage', 'TXT non structuré', 'JPEG', 'MP3'],
       correctIndex: 0,
       explanation:
@@ -321,7 +360,8 @@ abstract class QuizCatalog {
     QuizQuestion(
       id: 's07',
       courseId: 'sig_qgis',
-      question: 'Pour sélectionner les écoles à moins de 2 km d’un hôpital, il faut surtout :',
+      question:
+          'Pour sélectionner les écoles à moins de 2 km d’un hôpital, il faut surtout :',
       options: [
         'Une relation de proximité spatiale',
         'Une jointure sur le nom de l’école',
@@ -350,7 +390,12 @@ abstract class QuizCatalog {
       id: 'g01',
       courseId: 'gnss_coordonnees',
       question: 'Le calcul d’une position GNSS repose principalement sur :',
-      options: ['La trilatération', 'La classification supervisée', 'La dissolution', 'La sémiologie graphique'],
+      options: [
+        'La trilatération',
+        'La classification supervisée',
+        'La dissolution',
+        'La sémiologie graphique',
+      ],
       correctIndex: 0,
       explanation:
           'Le récepteur combine les distances estimées vers plusieurs satellites par trilatération.',
@@ -358,7 +403,8 @@ abstract class QuizCatalog {
     QuizQuestion(
       id: 'g02',
       courseId: 'gnss_coordonnees',
-      question: 'Pourquoi faut-il au moins quatre satellites pour une position 3D GNSS ?',
+      question:
+          'Pourquoi faut-il au moins quatre satellites pour une position 3D GNSS ?',
       options: [
         'Pour calculer X, Y, Z et l’erreur d’horloge du récepteur',
         'Pour colorier quatre couches',
@@ -415,7 +461,12 @@ abstract class QuizCatalog {
       id: 'g06',
       courseId: 'gnss_coordonnees',
       question: 'La hauteur fournie directement par le GNSS est généralement :',
-      options: ['Ellipsoïdale', 'Orthométrique sans correction', 'Toujours négative', 'Une distance plane'],
+      options: [
+        'Ellipsoïdale',
+        'Orthométrique sans correction',
+        'Toujours négative',
+        'Une distance plane',
+      ],
       correctIndex: 0,
       explanation:
           'Le GNSS se réfère à l’ellipsoïde ; un modèle de géoïde est nécessaire pour obtenir une altitude usuelle.',
@@ -423,7 +474,8 @@ abstract class QuizCatalog {
     QuizQuestion(
       id: 'g07',
       courseId: 'gnss_coordonnees',
-      question: 'Pour mesurer des distances en mètres dans un SIG, on privilégie :',
+      question:
+          'Pour mesurer des distances en mètres dans un SIG, on privilégie :',
       options: [
         'Un système projeté adapté à la zone',
         'Des coordonnées en degrés sans précaution',
@@ -437,8 +489,14 @@ abstract class QuizCatalog {
     QuizQuestion(
       id: 'g08',
       courseId: 'gnss_coordonnees',
-      question: 'Quelle information doit toujours accompagner une liste de coordonnées ?',
-      options: ['Le système de référence utilisé', 'La couleur du récepteur', 'Le prix du téléphone', 'Le nom du dossier uniquement'],
+      question:
+          'Quelle information doit toujours accompagner une liste de coordonnées ?',
+      options: [
+        'Le système de référence utilisé',
+        'La couleur du récepteur',
+        'Le prix du téléphone',
+        'Le nom du dossier uniquement',
+      ],
       correctIndex: 0,
       explanation:
           'Sans référentiel, les valeurs X/Y ou latitude/longitude peuvent être ambiguës ou mal placées.',
@@ -461,7 +519,12 @@ abstract class QuizCatalog {
       id: 't02',
       courseId: 'teledetection',
       question: 'La résolution spatiale correspond principalement :',
-      options: ['À la taille du pixel au sol', 'Au nombre de dates', 'Au nombre de classes', 'À la vitesse Internet'],
+      options: [
+        'À la taille du pixel au sol',
+        'Au nombre de dates',
+        'Au nombre de classes',
+        'À la vitesse Internet',
+      ],
       correctIndex: 0,
       explanation:
           'La dimension du pixel détermine le niveau de détail spatial observable.',
@@ -497,8 +560,14 @@ abstract class QuizCatalog {
     QuizQuestion(
       id: 't05',
       courseId: 'teledetection',
-      question: 'Quelle longueur d’onde est particulièrement utile pour la végétation saine ?',
-      options: ['Le proche infrarouge', 'Le son', 'Les ondes Wi-Fi uniquement', 'Aucune bande'],
+      question:
+          'Quelle longueur d’onde est particulièrement utile pour la végétation saine ?',
+      options: [
+        'Le proche infrarouge',
+        'Le son',
+        'Les ondes Wi-Fi uniquement',
+        'Aucune bande',
+      ],
       correctIndex: 0,
       explanation:
           'La végétation saine réfléchit fortement le proche infrarouge.',
@@ -534,8 +603,14 @@ abstract class QuizCatalog {
     QuizQuestion(
       id: 't08',
       courseId: 'teledetection',
-      question: 'Quel capteur actif est particulièrement connu pour fonctionner de nuit et par temps nuageux ?',
-      options: ['Le radar', 'Une caméra RGB passive', 'Un scanner papier', 'Un thermomètre analogique'],
+      question:
+          'Quel capteur actif est particulièrement connu pour fonctionner de nuit et par temps nuageux ?',
+      options: [
+        'Le radar',
+        'Une caméra RGB passive',
+        'Un scanner papier',
+        'Un thermomètre analogique',
+      ],
       correctIndex: 0,
       explanation:
           'Le radar émet des micro-ondes et dépend moins de l’éclairage solaire ou de la couverture nuageuse.',
@@ -543,7 +618,8 @@ abstract class QuizCatalog {
     QuizQuestion(
       id: 'p01',
       courseId: 'photogrammetrie_drone',
-      question: 'Pourquoi les images d’une mission photogrammétrique doivent-elles se recouvrir ?',
+      question:
+          'Pourquoi les images d’une mission photogrammétrique doivent-elles se recouvrir ?',
       options: [
         'Pour identifier les mêmes détails sur plusieurs images et reconstruire la géométrie',
         'Pour réduire le nombre de points homologues à zéro',
@@ -613,8 +689,14 @@ abstract class QuizCatalog {
     QuizQuestion(
       id: 'p06',
       courseId: 'photogrammetrie_drone',
-      question: 'Une vitesse de vol trop élevée avec un temps de pose long risque surtout de produire :',
-      options: ['Du flou de mouvement', 'Un meilleur recouvrement automatique', 'Un SCR différent', 'Un géoïde plus précis'],
+      question:
+          'Une vitesse de vol trop élevée avec un temps de pose long risque surtout de produire :',
+      options: [
+        'Du flou de mouvement',
+        'Un meilleur recouvrement automatique',
+        'Un SCR différent',
+        'Un géoïde plus précis',
+      ],
       correctIndex: 0,
       explanation:
           'Le déplacement pendant l’exposition dégrade la netteté et donc la qualité des correspondances.',
@@ -636,7 +718,8 @@ abstract class QuizCatalog {
     QuizQuestion(
       id: 'p08',
       courseId: 'photogrammetrie_drone',
-      question: 'Quel contrôle est le plus crédible pour annoncer la précision absolue ?',
+      question:
+          'Quel contrôle est le plus crédible pour annoncer la précision absolue ?',
       options: [
         'Les résidus sur des checkpoints indépendants',
         'La couleur de l’orthomosaïque',
@@ -647,11 +730,11 @@ abstract class QuizCatalog {
       explanation:
           'Les checkpoints non utilisés dans l’ajustement évaluent le résultat sur des références indépendantes.',
     ),
+    ...ExtendedQuizCatalog.questions,
   ];
 
-  static QuizDefinition quizForCourse(String courseId) => definitions.firstWhere(
-        (quiz) => quiz.courseId == courseId,
-      );
+  static QuizDefinition quizForCourse(String courseId) =>
+      definitions.firstWhere((quiz) => quiz.courseId == courseId);
 
   static List<QuizQuestion> questionsFor(QuizDefinition definition) {
     if (definition.courseId != null) {
@@ -660,9 +743,31 @@ abstract class QuizCatalog {
           .toList(growable: false);
     }
 
-    const challengeIndexes = <int>[0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44];
-    return challengeIndexes
-        .map((index) => questions[index])
-        .toList(growable: false);
+    const challengeIds = <String>[
+      'b03',
+      'c04',
+      's06',
+      'g05',
+      't08',
+      'p04',
+      'to03',
+      'ge06',
+      'db08',
+      'wm04',
+      'gs07',
+      'mh06',
+      'cf03',
+      'py08',
+      'cq05',
+      'er09',
+      'b10',
+      'db10',
+      'gs10',
+      'er10',
+    ];
+    final questionsById = <String, QuizQuestion>{
+      for (final question in questions) question.id: question,
+    };
+    return challengeIds.map((id) => questionsById[id]!).toList(growable: false);
   }
 }

@@ -15,6 +15,9 @@ if manifest.exists():
         text,
         count=1,
     )
+    permission = '<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />'
+    if permission not in text:
+        text = text.replace('<manifest xmlns:android="http://schemas.android.com/apk/res/android">', '<manifest xmlns:android="http://schemas.android.com/apk/res/android">\n    ' + permission, 1)
     manifest.write_text(text, encoding='utf-8')
 
 icon_root = ROOT / 'tool' / 'icons'
@@ -62,6 +65,19 @@ if gradle.exists():
         count=1,
     )
     text = re.sub(r'minSdk\s*=\s*[^\n]+', 'minSdk = 24', text, count=1)
+    if 'multiDexEnabled = true' not in text:
+        text = text.replace(
+            '    defaultConfig {',
+            '    defaultConfig {\n        multiDexEnabled = true',
+            1,
+        )
+
+    if 'isCoreLibraryDesugaringEnabled = true' not in text:
+        text = text.replace(
+            '    compileOptions {',
+            '    compileOptions {\n        isCoreLibraryDesugaringEnabled = true',
+            1,
+        )
 
     if 'import java.io.FileInputStream' not in text:
         text = 'import java.io.FileInputStream\nimport java.util.Properties\n\n' + text
@@ -99,6 +115,14 @@ if (keystorePropertiesFile.exists()) {
         'signingConfig = signingConfigs.getByName("debug")',
         release_signing,
     )
+    dependencies_block = '''\n\ndependencies {
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
+    implementation("androidx.window:window:1.4.0")
+    implementation("androidx.window:window-java:1.4.0")
+}
+'''
+    if 'coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")' not in text:
+        text += dependencies_block
     gradle.write_text(text, encoding='utf-8')
 
 main_activity = (

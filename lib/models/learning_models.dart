@@ -1,4 +1,4 @@
-enum CourseLevel { debutant, intermediaire }
+enum CourseLevel { debutant, intermediaire, avance }
 
 extension CourseLevelLabel on CourseLevel {
   String get label {
@@ -7,6 +7,8 @@ extension CourseLevelLabel on CourseLevel {
         return 'Débutant';
       case CourseLevel.intermediaire:
         return 'Intermédiaire';
+      case CourseLevel.avance:
+        return 'Avancé';
     }
   }
 }

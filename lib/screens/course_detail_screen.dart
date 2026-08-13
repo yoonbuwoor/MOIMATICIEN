@@ -20,10 +20,8 @@ class CourseDetailScreen extends StatelessWidget {
     final quiz = QuizCatalog.quizForCourse(course.id);
     Navigator.of(context).push<void>(
       MaterialPageRoute<void>(
-        builder: (context) => QuizScreen(
-          definition: quiz,
-          controller: controller,
-        ),
+        builder: (context) =>
+            QuizScreen(definition: quiz, controller: controller),
       ),
     );
   }
@@ -89,18 +87,32 @@ class CourseDetailScreen extends StatelessWidget {
                             const SizedBox(height: 9),
                             Row(
                               children: [
-                                const Icon(Icons.schedule_rounded, size: 16, color: Colors.white70),
+                                const Icon(
+                                  Icons.schedule_rounded,
+                                  size: 16,
+                                  color: Colors.white70,
+                                ),
                                 const SizedBox(width: 5),
                                 Text(
                                   '${course.durationMinutes} min',
-                                  style: const TextStyle(color: Colors.white70, fontWeight: FontWeight.w600),
+                                  style: const TextStyle(
+                                    color: Colors.white70,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                                 const SizedBox(width: 16),
-                                const Icon(Icons.signal_cellular_alt_rounded, size: 16, color: Colors.white70),
+                                const Icon(
+                                  Icons.signal_cellular_alt_rounded,
+                                  size: 16,
+                                  color: Colors.white70,
+                                ),
                                 const SizedBox(width: 5),
                                 Text(
                                   course.level.label,
-                                  style: const TextStyle(color: Colors.white70, fontWeight: FontWeight.w600),
+                                  style: const TextStyle(
+                                    color: Colors.white70,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ],
                             ),
@@ -115,18 +127,28 @@ class CourseDetailScreen extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(20, 22, 20, 124),
                 sliver: SliverList(
                   delegate: SliverChildListDelegate([
-                    Text(course.subtitle, style: Theme.of(context).textTheme.bodyLarge),
+                    Text(
+                      course.subtitle,
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
                     const SizedBox(height: 22),
                     _ObjectivesCard(course: course, accent: accent),
                     const SizedBox(height: 28),
-                    Text('Le cours', style: Theme.of(context).textTheme.titleLarge),
+                    Text(
+                      'Le cours',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
                     const SizedBox(height: 6),
                     Text(
                       'Ouvrez chaque partie pour lire les explications et retenir l’essentiel.',
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     const SizedBox(height: 14),
-                    for (var index = 0; index < course.sections.length; index++) ...[
+                    for (
+                      var index = 0;
+                      index < course.sections.length;
+                      index++
+                    ) ...[
                       _SectionCard(
                         section: course.sections[index],
                         accent: accent,
@@ -161,17 +183,27 @@ class CourseDetailScreen extends StatelessWidget {
               onPressed: completed
                   ? () => _openQuiz(context)
                   : () async {
-                      await controller.markCourseCompleted(course.id);
+                      final reward = await controller.markCourseCompleted(
+                        course.id,
+                      );
                       if (!context.mounted) return;
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Cours terminé. Votre progression est enregistrée.'),
+                        SnackBar(
+                          content: Text(
+                            'Cours terminé • +$reward XP ! Votre série continue.',
+                          ),
                           behavior: SnackBarBehavior.floating,
                         ),
                       );
                     },
-              icon: Icon(completed ? Icons.quiz_rounded : Icons.check_circle_outline_rounded),
-              label: Text(completed ? 'Passer au quiz' : 'Marquer comme terminé'),
+              icon: Icon(
+                completed
+                    ? Icons.quiz_rounded
+                    : Icons.check_circle_outline_rounded,
+              ),
+              label: Text(
+                completed ? 'Passer au quiz' : 'Marquer comme terminé',
+              ),
             );
           },
         ),
@@ -214,7 +246,12 @@ class _ObjectivesCard extends StatelessWidget {
                 children: [
                   Icon(Icons.check_rounded, color: accent, size: 19),
                   const SizedBox(width: 9),
-                  Expanded(child: Text(objective, style: Theme.of(context).textTheme.bodyMedium)),
+                  Expanded(
+                    child: Text(
+                      objective,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -247,7 +284,10 @@ class _SectionCard extends StatelessWidget {
           childrenPadding: const EdgeInsets.fromLTRB(18, 0, 18, 20),
           iconColor: accent,
           collapsedIconColor: AppColors.burgundy,
-          title: Text(section.title, style: Theme.of(context).textTheme.titleMedium),
+          title: Text(
+            section.title,
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
           children: [
             const Divider(color: Color(0xFFF0E2E7)),
             const SizedBox(height: 9),
@@ -263,10 +303,18 @@ class _SectionCard extends StatelessWidget {
                       width: 7,
                       height: 7,
                       margin: const EdgeInsets.only(top: 7),
-                      decoration: BoxDecoration(color: accent, shape: BoxShape.circle),
+                      decoration: BoxDecoration(
+                        color: accent,
+                        shape: BoxShape.circle,
+                      ),
                     ),
                     const SizedBox(width: 11),
-                    Expanded(child: Text(point, style: Theme.of(context).textTheme.bodyMedium)),
+                    Expanded(
+                      child: Text(
+                        point,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -282,12 +330,20 @@ class _SectionCard extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(Icons.tips_and_updates_rounded, color: AppColors.warning, size: 21),
+                    const Icon(
+                      Icons.tips_and_updates_rounded,
+                      color: AppColors.warning,
+                      size: 21,
+                    ),
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(
                         section.fieldNote!,
-                        style: const TextStyle(color: Color(0xFF684A16), fontSize: 13, height: 1.45),
+                        style: const TextStyle(
+                          color: Color(0xFF684A16),
+                          fontSize: 13,
+                          height: 1.45,
+                        ),
                       ),
                     ),
                   ],
@@ -318,16 +374,28 @@ class _QuizInvitation extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.psychology_alt_rounded, color: AppColors.coral, size: 38),
+          const Icon(
+            Icons.psychology_alt_rounded,
+            color: AppColors.coral,
+            size: 38,
+          ),
           const SizedBox(height: 12),
           const Text(
             'Prêt à vérifier vos acquis ?',
-            style: TextStyle(color: Colors.white, fontSize: 19, fontWeight: FontWeight.w800),
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 19,
+              fontWeight: FontWeight.w800,
+            ),
           ),
           const SizedBox(height: 7),
           const Text(
-            'Répondez aux 8 questions et découvrez l’explication immédiatement.',
-            style: TextStyle(color: Color(0xFFE0D3DA), fontSize: 13, height: 1.45),
+            'Répondez aux 10 questions, gagnez des XP et découvrez l’explication immédiatement.',
+            style: TextStyle(
+              color: Color(0xFFE0D3DA),
+              fontSize: 13,
+              height: 1.45,
+            ),
           ),
           const SizedBox(height: 16),
           FilledButton.icon(
@@ -363,7 +431,10 @@ class _CompletedBanner extends StatelessWidget {
           Expanded(
             child: Text(
               'Cours terminé — vous pouvez le relire à tout moment.',
-              style: TextStyle(color: AppColors.success, fontWeight: FontWeight.w700),
+              style: TextStyle(
+                color: AppColors.success,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
         ],

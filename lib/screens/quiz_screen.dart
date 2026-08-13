@@ -24,6 +24,8 @@ class _QuizScreenState extends State<QuizScreen> {
   late final List<QuizQuestion> _questions;
   int _currentIndex = 0;
   int _score = 0;
+  int _combo = 0;
+  int _bestCombo = 0;
   int? _selectedIndex;
 
   QuizQuestion get _question => _questions[_currentIndex];
@@ -40,14 +42,20 @@ class _QuizScreenState extends State<QuizScreen> {
     if (_answered) return;
     setState(() {
       _selectedIndex = index;
-      if (index == _question.correctIndex) _score++;
+      if (index == _question.correctIndex) {
+        _score++;
+        _combo++;
+        if (_combo > _bestCombo) _bestCombo = _combo;
+      } else {
+        _combo = 0;
+      }
     });
   }
 
   Future<void> _continue() async {
     if (!_answered) return;
     if (_isLast) {
-      await widget.controller.saveQuizScore(
+      final earnedXp = await widget.controller.saveQuizScore(
         quizId: widget.definition.id,
         correct: _score,
         total: _questions.length,
@@ -60,6 +68,8 @@ class _QuizScreenState extends State<QuizScreen> {
             controller: widget.controller,
             score: _score,
             total: _questions.length,
+            earnedXp: earnedXp,
+            bestCombo: _bestCombo,
           ),
         ),
       );
@@ -97,6 +107,27 @@ class _QuizScreenState extends State<QuizScreen> {
                     fontWeight: FontWeight.w800,
                   ),
                 ),
+                if (_combo >= 2) ...[
+                  const SizedBox(width: 10),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.coral.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: Text(
+                      '🔥 Combo x$_combo',
+                      style: const TextStyle(
+                        color: AppColors.coral,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
+                ],
                 const Spacer(),
                 Text(
                   '$_score bonne${_score > 1 ? 's' : ''} réponse${_score > 1 ? 's' : ''}',
@@ -127,7 +158,11 @@ class _QuizScreenState extends State<QuizScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(quizIcon(widget.definition.iconName), color: AppColors.coral, size: 34),
+                  Icon(
+                    quizIcon(widget.definition.iconName),
+                    color: AppColors.coral,
+                    size: 34,
+                  ),
                   const SizedBox(height: 16),
                   Text(
                     _question.question,
@@ -148,7 +183,8 @@ class _QuizScreenState extends State<QuizScreen> {
                 label: _question.options[index],
                 selected: _selectedIndex == index,
                 isCorrect: _answered && index == _question.correctIndex,
-                isWrongSelection: _answered &&
+                isWrongSelection:
+                    _answered &&
                     _selectedIndex == index &&
                     index != _question.correctIndex,
                 disabled: _answered,
@@ -162,6 +198,7 @@ class _QuizScreenState extends State<QuizScreen> {
               _ExplanationCard(
                 correct: _selectedIndex == _question.correctIndex,
                 explanation: _question.explanation,
+                combo: _combo,
               ),
             ],
           ],
@@ -171,7 +208,9 @@ class _QuizScreenState extends State<QuizScreen> {
         minimum: const EdgeInsets.fromLTRB(16, 8, 16, 14),
         child: FilledButton.icon(
           onPressed: _answered ? _continue : null,
-          icon: Icon(_isLast ? Icons.flag_rounded : Icons.arrow_forward_rounded),
+          icon: Icon(
+            _isLast ? Icons.flag_rounded : Icons.arrow_forward_rounded,
+          ),
           label: Text(_isLast ? 'Voir mon résultat' : 'Question suivante'),
         ),
       ),
@@ -226,7 +265,10 @@ class _AnswerOption extends StatelessWidget {
       color: backgroundColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(18),
-        side: BorderSide(color: borderColor, width: isCorrect || isWrongSelection ? 1.7 : 1),
+        side: BorderSide(
+          color: borderColor,
+          width: isCorrect || isWrongSelection ? 1.7 : 1,
+        ),
       ),
       child: InkWell(
         onTap: disabled ? null : onTap,
@@ -241,7 +283,10 @@ class _AnswerOption extends StatelessWidget {
                 foregroundColor: selected || isCorrect || isWrongSelection
                     ? Colors.white
                     : AppColors.burgundy,
-                child: Text(letter, style: const TextStyle(fontWeight: FontWeight.w800)),
+                child: Text(
+                  letter,
+                  style: const TextStyle(fontWeight: FontWeight.w800),
+                ),
               ),
               const SizedBox(width: 13),
               Expanded(
@@ -268,10 +313,15 @@ class _AnswerOption extends StatelessWidget {
 }
 
 class _ExplanationCard extends StatelessWidget {
-  const _ExplanationCard({required this.correct, required this.explanation});
+  const _ExplanationCard({
+    required this.correct,
+    required this.explanation,
+    required this.combo,
+  });
 
   final bool correct;
   final String explanation;
+  final int combo;
 
   @override
   Widget build(BuildContext context) {
@@ -296,11 +346,22 @@ class _ExplanationCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  correct ? 'Bonne réponse !' : 'À retenir',
-                  style: TextStyle(color: color, fontSize: 15, fontWeight: FontWeight.w800),
+                  correct
+                      ? combo >= 3
+                            ? 'Excellent combo x$combo !'
+                            : 'Bonne réponse • +5 XP !'
+                      : 'À retenir',
+                  style: TextStyle(
+                    color: color,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
                 const SizedBox(height: 5),
-                Text(explanation, style: Theme.of(context).textTheme.bodyMedium),
+                Text(
+                  explanation,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
               ],
             ),
           ),
@@ -316,6 +377,8 @@ class QuizResultScreen extends StatelessWidget {
     required this.controller,
     required this.score,
     required this.total,
+    required this.earnedXp,
+    required this.bestCombo,
     super.key,
   });
 
@@ -323,6 +386,8 @@ class QuizResultScreen extends StatelessWidget {
   final AppController controller;
   final int score;
   final int total;
+  final int earnedXp;
+  final int bestCombo;
 
   int get percentage => ((score / total) * 100).round();
 
@@ -371,7 +436,9 @@ class QuizResultScreen extends StatelessWidget {
                       border: Border.all(color: Colors.white24, width: 2),
                     ),
                     child: Icon(
-                      passed ? Icons.emoji_events_rounded : Icons.menu_book_rounded,
+                      passed
+                          ? Icons.emoji_events_rounded
+                          : Icons.menu_book_rounded,
                       color: passed ? const Color(0xFFFFC04D) : AppColors.coral,
                       size: 50,
                     ),
@@ -389,7 +456,10 @@ class QuizResultScreen extends StatelessWidget {
                   const SizedBox(height: 9),
                   Text(
                     '$score bonnes réponses sur $total',
-                    style: const TextStyle(color: Color(0xFFE8DBE1), fontSize: 14),
+                    style: const TextStyle(
+                      color: Color(0xFFE8DBE1),
+                      fontSize: 14,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   Text(
@@ -406,6 +476,28 @@ class QuizResultScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
+            Row(
+              children: [
+                Expanded(
+                  child: _ResultReward(
+                    icon: Icons.bolt_rounded,
+                    value: '+$earnedXp XP',
+                    label: 'récompense',
+                    color: AppColors.warning,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _ResultReward(
+                    icon: Icons.local_fire_department_rounded,
+                    value: 'x$bestCombo',
+                    label: 'meilleur combo',
+                    color: AppColors.coral,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(18),
@@ -414,7 +506,9 @@ class QuizResultScreen extends StatelessWidget {
                     CircleAvatar(
                       backgroundColor: accent.withValues(alpha: 0.12),
                       foregroundColor: accent,
-                      child: Icon(passed ? Icons.verified_rounded : Icons.replay_rounded),
+                      child: Icon(
+                        passed ? Icons.verified_rounded : Icons.replay_rounded,
+                      ),
                     ),
                     const SizedBox(width: 13),
                     Expanded(
@@ -422,7 +516,9 @@ class QuizResultScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            passed ? 'Objectif atteint' : 'Continuez vos efforts',
+                            passed
+                                ? 'Objectif atteint'
+                                : 'Continuez vos efforts',
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
                           const SizedBox(height: 4),
@@ -459,6 +555,50 @@ class QuizResultScreen extends StatelessWidget {
               onPressed: () => Navigator.of(context).pop(),
               icon: const Icon(Icons.arrow_back_rounded),
               label: const Text('Retour aux quiz'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ResultReward extends StatelessWidget {
+  const _ResultReward({
+    required this.icon,
+    required this.value,
+    required this.label,
+    required this.color,
+  });
+
+  final IconData icon;
+  final String value;
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            Icon(icon, color: color, size: 30),
+            const SizedBox(height: 8),
+            Text(
+              value,
+              style: const TextStyle(
+                color: AppColors.ink,
+                fontSize: 18,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              label,
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(fontSize: 11),
             ),
           ],
         ),

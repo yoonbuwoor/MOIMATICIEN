@@ -22,10 +22,8 @@ class HomeScreen extends StatelessWidget {
   void _openCourse(BuildContext context, Course course) {
     Navigator.of(context).push<void>(
       MaterialPageRoute<void>(
-        builder: (context) => CourseDetailScreen(
-          course: course,
-          controller: controller,
-        ),
+        builder: (context) =>
+            CourseDetailScreen(course: course, controller: controller),
       ),
     );
   }
@@ -39,7 +37,9 @@ class HomeScreen extends StatelessWidget {
         builder: (context, child) {
           final completed = controller.completedCourseIds;
           final nextCourse = _firstIncomplete(completed);
-          final progress = controller.courseProgress(CourseCatalog.courses.length);
+          final progress = controller.courseProgress(
+            CourseCatalog.courses.length,
+          );
           return CustomScrollView(
             key: const PageStorageKey('home-scroll'),
             physics: const BouncingScrollPhysics(),
@@ -60,6 +60,10 @@ class HomeScreen extends StatelessWidget {
                       totalCourses: CourseCatalog.courses.length,
                       progress: progress,
                       quizCount: controller.bestQuizPercentages.length,
+                      level: controller.level,
+                      xp: controller.xp,
+                      streakDays: controller.streakDays,
+                      badgeCount: controller.unlockedBadgeCount,
                     ),
                     const SizedBox(height: 28),
                     SectionTitle(
@@ -146,7 +150,10 @@ class _BrandHeader extends StatelessWidget {
               ),
             ],
           ),
-          child: Image.asset('assets/brand/app_symbol.png', fit: BoxFit.contain),
+          child: Image.asset(
+            'assets/brand/app_symbol.png',
+            fit: BoxFit.contain,
+          ),
         ),
         const SizedBox(width: 13),
         const Expanded(
@@ -219,7 +226,10 @@ class _HeroPanel extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 7),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 11,
+                  vertical: 7,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(999),
@@ -294,71 +304,152 @@ class _ProgressPanel extends StatelessWidget {
     required this.totalCourses,
     required this.progress,
     required this.quizCount,
+    required this.level,
+    required this.xp,
+    required this.streakDays,
+    required this.badgeCount,
   });
 
   final int completedCount;
   final int totalCourses;
   final double progress;
   final int quizCount;
+  final int level;
+  final int xp;
+  final int streakDays;
+  final int badgeCount;
 
   @override
   Widget build(BuildContext context) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(18),
-        child: Row(
+        child: Column(
           children: [
-            SizedBox(
-              width: 72,
-              height: 72,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  CircularProgressIndicator(
-                    value: progress,
-                    strokeWidth: 8,
-                    backgroundColor: AppColors.softRose,
-                    strokeCap: StrokeCap.round,
-                  ),
-                  Center(
-                    child: Text(
-                      '${(progress * 100).round()}%',
-                      style: const TextStyle(
-                        color: AppColors.burgundy,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w900,
+            Row(
+              children: [
+                SizedBox(
+                  width: 72,
+                  height: 72,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      CircularProgressIndicator(
+                        value: progress,
+                        strokeWidth: 8,
+                        backgroundColor: AppColors.softRose,
+                        strokeCap: StrokeCap.round,
                       ),
-                    ),
+                      Center(
+                        child: Text(
+                          '${(progress * 100).round()}%',
+                          style: const TextStyle(
+                            color: AppColors.burgundy,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(width: 17),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Votre progression',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      const SizedBox(height: 5),
+                      Text(
+                        '$completedCount cours sur $totalCourses terminés',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '$quizCount quiz déjà tentés',
+                        style: const TextStyle(
+                          color: AppColors.coral,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(width: 17),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Votre progression', style: Theme.of(context).textTheme.titleMedium),
-                  const SizedBox(height: 5),
-                  Text(
-                    '$completedCount cours sur $totalCourses terminés',
-                    style: Theme.of(context).textTheme.bodyMedium,
+            const SizedBox(height: 16),
+            const Divider(height: 1, color: Color(0xFFF0E2E7)),
+            const SizedBox(height: 14),
+            Row(
+              children: [
+                Expanded(
+                  child: _MiniReward(
+                    icon: Icons.bolt_rounded,
+                    value: '$xp XP',
+                    color: AppColors.warning,
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '$quizCount quiz déjà tentés',
-                    style: const TextStyle(
-                      color: AppColors.coral,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                    ),
+                ),
+                Expanded(
+                  child: _MiniReward(
+                    icon: Icons.military_tech_rounded,
+                    value: 'Niv. $level',
+                    color: AppColors.burgundy,
                   ),
-                ],
-              ),
+                ),
+                Expanded(
+                  child: _MiniReward(
+                    icon: Icons.local_fire_department_rounded,
+                    value: '$streakDays j',
+                    color: AppColors.coral,
+                  ),
+                ),
+                Expanded(
+                  child: _MiniReward(
+                    icon: Icons.workspace_premium_rounded,
+                    value: '$badgeCount',
+                    color: AppColors.success,
+                  ),
+                ),
+              ],
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _MiniReward extends StatelessWidget {
+  const _MiniReward({
+    required this.icon,
+    required this.value,
+    required this.color,
+  });
+
+  final IconData icon;
+  final String value;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Icon(icon, color: color, size: 21),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          maxLines: 1,
+          style: const TextStyle(
+            color: AppColors.ink,
+            fontSize: 11,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -379,11 +470,21 @@ class _CompletionCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          const Icon(Icons.workspace_premium_rounded, color: AppColors.success, size: 48),
+          const Icon(
+            Icons.workspace_premium_rounded,
+            color: AppColors.success,
+            size: 48,
+          ),
           const SizedBox(height: 10),
-          Text('Bravo, tous les cours sont terminés.', style: Theme.of(context).textTheme.titleMedium),
+          Text(
+            'Bravo, tous les cours sont terminés.',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
           const SizedBox(height: 12),
-          FilledButton(onPressed: onOpenQuizzes, child: const Text('Relever le défi final')),
+          FilledButton(
+            onPressed: onOpenQuizzes,
+            child: const Text('Relever le défi final'),
+          ),
         ],
       ),
     );
@@ -416,12 +517,20 @@ class _FieldTip extends StatelessWidget {
               children: [
                 Text(
                   'Réflexe du terrain',
-                  style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w800),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
                 SizedBox(height: 6),
                 Text(
                   'Une coordonnée sans système de référence est une information incomplète. Notez toujours le code EPSG.',
-                  style: TextStyle(color: Color(0xFFD8CDD3), fontSize: 13, height: 1.45),
+                  style: TextStyle(
+                    color: Color(0xFFD8CDD3),
+                    fontSize: 13,
+                    height: 1.45,
+                  ),
                 ),
               ],
             ),

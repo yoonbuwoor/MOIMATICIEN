@@ -15,10 +15,8 @@ class QuizHubScreen extends StatelessWidget {
   void _openQuiz(BuildContext context, QuizDefinition definition) {
     Navigator.of(context).push<void>(
       MaterialPageRoute<void>(
-        builder: (context) => QuizScreen(
-          definition: definition,
-          controller: controller,
-        ),
+        builder: (context) =>
+            QuizScreen(definition: definition, controller: controller),
       ),
     );
   }
@@ -44,11 +42,16 @@ class QuizHubScreen extends StatelessWidget {
               const SizedBox(height: 22),
               _QuizSummary(controller: controller),
               const SizedBox(height: 28),
-              Text('Choisissez un thème', style: Theme.of(context).textTheme.titleLarge),
+              Text(
+                'Choisissez un thème',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
               const SizedBox(height: 14),
-              for (var index = 0;
-                  index < QuizCatalog.definitions.length;
-                  index++) ...[
+              for (
+                var index = 0;
+                index < QuizCatalog.definitions.length;
+                index++
+              ) ...[
                 _QuizCard(
                   definition: QuizCatalog.definitions[index],
                   bestScore: controller.bestScoreFor(
@@ -96,7 +99,11 @@ class _QuizSummary extends StatelessWidget {
               color: Colors.white.withValues(alpha: 0.12),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.emoji_events_rounded, color: AppColors.coral, size: 35),
+            child: const Icon(
+              Icons.emoji_events_rounded,
+              color: AppColors.coral,
+              size: 35,
+            ),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -105,14 +112,21 @@ class _QuizSummary extends StatelessWidget {
               children: [
                 const Text(
                   'Votre tableau de bord',
-                  style: TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w800),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 17,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
                 const SizedBox(height: 6),
                 Text(
                   scores.isEmpty
-                      ? 'Lancez votre premier quiz.'
-                      : '${scores.length} quiz • $average% de moyenne',
-                  style: const TextStyle(color: Color(0xFFE5D7DF), fontSize: 13),
+                      ? 'Lancez votre premier quiz et gagnez des XP.'
+                      : '${scores.length} quiz • $average% de moyenne • ${controller.xp} XP',
+                  style: const TextStyle(
+                    color: Color(0xFFE5D7DF),
+                    fontSize: 13,
+                  ),
                 ),
               ],
             ),
@@ -152,21 +166,35 @@ class _QuizCard extends StatelessWidget {
                   color: accent.withValues(alpha: 0.11),
                   borderRadius: BorderRadius.circular(18),
                 ),
-                child: Icon(quizIcon(definition.iconName), color: accent, size: 29),
+                child: Icon(
+                  quizIcon(definition.iconName),
+                  color: accent,
+                  size: 29,
+                ),
               ),
               const SizedBox(width: 14),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(definition.title, style: Theme.of(context).textTheme.titleMedium),
+                    Text(
+                      definition.title,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
                     const SizedBox(height: 5),
-                    Text(definition.subtitle, style: Theme.of(context).textTheme.bodyMedium),
+                    Text(
+                      definition.subtitle,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
                     if (bestScore != null) ...[
                       const SizedBox(height: 7),
                       Text(
                         'Meilleur score : $bestScore%',
-                        style: TextStyle(color: accent, fontSize: 12, fontWeight: FontWeight.w800),
+                        style: TextStyle(
+                          color: accent,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w800,
+                        ),
                       ),
                     ],
                   ],

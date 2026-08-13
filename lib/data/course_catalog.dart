@@ -1,7 +1,8 @@
 import '../models/learning_models.dart';
+import 'extended_course_catalog.dart';
 
 abstract class CourseCatalog {
-  static const courses = <Course>[
+  static final List<Course> courses = <Course>[
     Course(
       id: 'bases_geomatique',
       title: 'Comprendre la géomatique',
@@ -380,7 +381,9 @@ abstract class CourseCatalog {
         ),
       ],
     ),
+    ...ExtendedCourseCatalog.courses,
   ];
 
-  static Course byId(String id) => courses.firstWhere((course) => course.id == id);
+  static Course byId(String id) =>
+      courses.firstWhere((course) => course.id == id);
 }

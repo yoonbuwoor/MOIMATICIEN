@@ -36,6 +36,13 @@ echo [6/6] Compilation AAB...
 call flutter build appbundle --release
 if errorlevel 1 goto :error
 
+for %%F in (build\app\outputs\flutter-apk\app-release.apk build\app\outputs\bundle\release\app-release.aab) do (
+  if %%~zF GTR 98566144 (
+    echo ERREUR : %%F depasse 94 Mo.
+    goto :error
+  )
+)
+
 echo.
 echo TERMINE :
 echo APK : build\app\outputs\flutter-apk\app-release.apk

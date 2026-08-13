@@ -22,24 +22,25 @@ class _CourseListScreenState extends State<CourseListScreen> {
 
   List<Course> get _filteredCourses {
     final normalized = _query.trim().toLowerCase();
-    return CourseCatalog.courses.where((course) {
-      final matchesLevel =
-          _selectedLevel == null || course.level == _selectedLevel;
-      final matchesQuery = normalized.isEmpty ||
-          course.title.toLowerCase().contains(normalized) ||
-          course.subtitle.toLowerCase().contains(normalized) ||
-          course.category.toLowerCase().contains(normalized);
-      return matchesLevel && matchesQuery;
-    }).toList(growable: false);
+    return CourseCatalog.courses
+        .where((course) {
+          final matchesLevel =
+              _selectedLevel == null || course.level == _selectedLevel;
+          final matchesQuery =
+              normalized.isEmpty ||
+              course.title.toLowerCase().contains(normalized) ||
+              course.subtitle.toLowerCase().contains(normalized) ||
+              course.category.toLowerCase().contains(normalized);
+          return matchesLevel && matchesQuery;
+        })
+        .toList(growable: false);
   }
 
   void _openCourse(Course course) {
     Navigator.of(context).push<void>(
       MaterialPageRoute<void>(
-        builder: (context) => CourseDetailScreen(
-          course: course,
-          controller: widget.controller,
-        ),
+        builder: (context) =>
+            CourseDetailScreen(course: course, controller: widget.controller),
       ),
     );
   }
@@ -105,7 +106,11 @@ class _CourseListScreenState extends State<CourseListScreen> {
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const Spacer(),
-                  const Icon(Icons.download_done_rounded, color: AppColors.success, size: 18),
+                  const Icon(
+                    Icons.download_done_rounded,
+                    color: AppColors.success,
+                    size: 18,
+                  ),
                   const SizedBox(width: 5),
                   const Text(
                     'Disponibles hors ligne',
@@ -124,8 +129,9 @@ class _CourseListScreenState extends State<CourseListScreen> {
                 for (var index = 0; index < courses.length; index++) ...[
                   CourseCard(
                     course: courses[index],
-                    completed:
-                        widget.controller.isCourseCompleted(courses[index].id),
+                    completed: widget.controller.isCourseCompleted(
+                      courses[index].id,
+                    ),
                     onTap: () => _openCourse(courses[index]),
                   ),
                   if (index != courses.length - 1) const SizedBox(height: 16),
@@ -151,9 +157,16 @@ class _EmptyCourses extends StatelessWidget {
       ),
       child: Column(
         children: [
-          const Icon(Icons.search_off_rounded, color: AppColors.muted, size: 52),
+          const Icon(
+            Icons.search_off_rounded,
+            color: AppColors.muted,
+            size: 52,
+          ),
           const SizedBox(height: 12),
-          Text('Aucun cours trouvé', style: Theme.of(context).textTheme.titleMedium),
+          Text(
+            'Aucun cours trouvé',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
           const SizedBox(height: 5),
           Text(
             'Essayez un autre mot-clé ou retirez le filtre.',

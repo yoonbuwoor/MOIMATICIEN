@@ -146,7 +146,11 @@ class _CourseImage extends StatelessWidget {
             fit: BoxFit.cover,
             errorBuilder: (context, error, stackTrace) => ColoredBox(
               color: Color(course.accentValue),
-              child: const Icon(Icons.map_rounded, color: Colors.white, size: 58),
+              child: const Icon(
+                Icons.map_rounded,
+                color: Colors.white,
+                size: 58,
+              ),
             ),
           ),
           const DecoratedBox(
@@ -306,6 +310,26 @@ IconData quizIcon(String name) {
       return Icons.image_search_rounded;
     case 'drone':
       return Icons.flight_rounded;
+    case 'topography':
+      return Icons.architecture_rounded;
+    case 'globe':
+      return Icons.public_rounded;
+    case 'database':
+      return Icons.storage_rounded;
+    case 'web':
+      return Icons.language_rounded;
+    case 'analytics':
+      return Icons.query_stats_rounded;
+    case 'terrain':
+      return Icons.terrain_rounded;
+    case 'cadastre':
+      return Icons.grid_4x4_rounded;
+    case 'code':
+      return Icons.code_rounded;
+    case 'mobile':
+      return Icons.phonelink_ring_rounded;
+    case 'environment':
+      return Icons.eco_rounded;
     case 'trophy':
       return Icons.emoji_events_rounded;
     default:
