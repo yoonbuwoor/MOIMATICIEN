@@ -1,0 +1,100 @@
+name: Build Moi Geomaticien APK et AAB
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+permissions:
+  contents: read
+
+jobs:
+  build-android:
+    name: Compiler Android
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+
+    steps:
+      - name: Telecharger le depot
+        uses: actions/checkout@v4
+
+      - name: Installer Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Installer Flutter 3.44.9
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.9'
+          channel: stable
+          cache: true
+
+      - name: Afficher les versions
+        run: |
+          flutter --version
+          dart --version
+          java -version
+
+      - name: Preparer Android
+        run: |
+          flutter create --platforms=android --org com.novateur221 --project-name moi_geomaticien .
+          python3 tool/configure_android.py
+
+      - name: Installer les dependances
+        run: flutter pub get
+
+      - name: Verifier le code
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings
+
+      - name: Executer les tests
+        run: flutter test
+
+      - name: Configurer la signature Google Play
+        shell: bash
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+
+          if [[ -n "$ANDROID_KEYSTORE_BASE64" && -n "$ANDROID_KEYSTORE_PASSWORD" && -n "$ANDROID_KEY_ALIAS" && -n "$ANDROID_KEY_PASSWORD" ]]; then
+            echo "::add-mask::$ANDROID_KEYSTORE_PASSWORD"
+            echo "::add-mask::$ANDROID_KEY_PASSWORD"
+            printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/app/upload-keystore.jks
+            cat > android/key.properties <<EOF
+          storePassword=$ANDROID_KEYSTORE_PASSWORD
+          keyPassword=$ANDROID_KEY_PASSWORD
+          keyAlias=$ANDROID_KEY_ALIAS
+          storeFile=upload-keystore.jks
+          EOF
+            echo "Signature Google Play configuree."
+          else
+            echo "::warning::Secrets de signature absents : APK et AAB signes avec la cle de test."
+          fi
+
+      - name: Compiler APK Release
+        run: flutter build apk --release
+
+      - name: Compiler AAB Release
+        run: flutter build appbundle --release
+
+      - name: Renommer les fichiers
+        run: |
+          cp build/app/outputs/flutter-apk/app-release.apk Moi-Geomaticien-1.0.0.apk
+          cp build/app/outputs/bundle/release/app-release.aab Moi-Geomaticien-1.0.0.aab
+
+      - name: Publier APK et AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: Moi-Geomaticien-1.0.0-Android
+          retention-days: 30
+          if-no-files-found: error
+          path: |
+            Moi-Geomaticien-1.0.0.apk
+            Moi-Geomaticien-1.0.0.aab
