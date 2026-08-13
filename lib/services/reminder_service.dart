@@ -20,8 +20,6 @@ void learningReminderCallbackDispatcher() {
       return true;
     }
     final preferences = SharedPreferencesAsync();
-    final enabled = await preferences.getBool(notificationsEnabledKey) ?? false;
-    if (!enabled) return true;
     final now = DateTime.now();
     final rawLastReminder = await preferences.getString(lastReminderAtKey);
     final lastReminder = DateTime.tryParse(rawLastReminder ?? '');
@@ -43,15 +41,10 @@ class ReminderService {
   static Future<void> initialize() async {
     await Workmanager().initialize(learningReminderCallbackDispatcher);
     final preferences = SharedPreferencesAsync();
-    final enabled = await preferences.getBool(notificationsEnabledKey) ?? false;
-    await refreshSchedule(enabled: enabled);
+    await refreshSchedule();
   }
 
-  static Future<void> refreshSchedule({required bool enabled}) async {
-    if (!enabled) {
-      await Workmanager().cancelByUniqueName(learningReminderTaskId);
-      return;
-    }
+  static Future<void> refreshSchedule() async {
     await Workmanager().registerPeriodicTask(
       learningReminderTaskId,
       learningReminderTaskName,

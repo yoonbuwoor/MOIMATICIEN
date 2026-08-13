@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../data/course_catalog.dart';
-import '../services/notification_service.dart';
 import '../services/external_links.dart';
-import '../services/reminder_service.dart';
 import '../state/app_controller.dart';
 import '../theme/app_theme.dart';
 import '../widgets/learning_widgets.dart';
@@ -13,31 +11,6 @@ class ProgressScreen extends StatelessWidget {
 
   final AppController controller;
 
-  Future<void> _toggleNotifications(BuildContext context, bool enabled) async {
-    var finalValue = enabled;
-    try {
-      if (enabled) {
-        finalValue = await NotificationService.instance.requestPermission();
-      }
-      await controller.setNotificationsEnabled(finalValue);
-      await ReminderService.refreshSchedule(enabled: finalValue);
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              finalValue
-                  ? 'Rappels activés toutes les 12 heures.'
-                  : enabled
-                  ? 'Autorisation de notification non accordée.'
-                  : 'Rappels désactivés.',
-            ),
-          ),
-        );
-      }
-    } catch (error) {
-      debugPrint('Modification des rappels impossible : $error');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -106,29 +79,11 @@ class ProgressScreen extends StatelessWidget {
               ),
               const SizedBox(height: 28),
               Card(
-                child: SwitchListTile(
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 18,
-                    vertical: 8,
-                  ),
-                  secondary: CircleAvatar(
-                    backgroundColor: AppColors.softRose,
-                    foregroundColor: AppColors.burgundy,
-                    child: Icon(
-                      controller.notificationsEnabled
-                          ? Icons.notifications_active_rounded
-                          : Icons.notifications_off_outlined,
-                    ),
-                  ),
-                  title: const Text(
-                    'Rappels toutes les 12 h',
-                    style: TextStyle(fontWeight: FontWeight.w800),
-                  ),
-                  subtitle: const Text(
-                    'Des encouragements locaux, sans connexion requise.',
-                  ),
-                  value: controller.notificationsEnabled,
-                  onChanged: (value) => _toggleNotifications(context, value),
+                child: ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+                  leading: const CircleAvatar(backgroundColor: AppColors.softRose, foregroundColor: AppColors.burgundy, child: Icon(Icons.notifications_active_rounded)),
+                  title: const Text('Rappels automatiques • 12 h', style: TextStyle(fontWeight: FontWeight.w800)),
+                  subtitle: const Text('Aucun bouton de désactivation dans l’application. Android peut toutefois bloquer les notifications depuis ses réglages système.'),
                 ),
               ),
               const SizedBox(height: 14),

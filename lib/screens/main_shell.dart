@@ -28,46 +28,23 @@ class _MainShellState extends State<MainShell> {
   }
 
   Future<void> _offerReminders() async {
-    if (!mounted || widget.controller.notificationPromptSeen) return;
-    final enable = await showDialog<bool>(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        icon: const Icon(Icons.notifications_active_rounded, size: 38),
-        title: const Text('Un rappel toutes les 12 h ?'),
-        content: const Text(
-          'Moi Géomaticien peut vous rappeler de garder votre série, gagner des XP et avancer dans les cours. Vous pourrez désactiver les rappels à tout moment.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Pas maintenant'),
-          ),
-          FilledButton.icon(
-            onPressed: () => Navigator.of(context).pop(true),
-            icon: const Icon(Icons.notifications_rounded),
-            label: const Text('Activer'),
-          ),
-        ],
-      ),
-    );
-    await widget.controller.setNotificationPromptSeen();
-    if (enable != true || !mounted) return;
+    if (!mounted) return;
     try {
-      final granted = await NotificationService.instance.requestPermission();
-      await widget.controller.setNotificationsEnabled(granted);
-      await ReminderService.refreshSchedule(enabled: granted);
-      if (!granted && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Autorisation refusée. Vous pourrez réessayer dans Progression.',
-            ),
-          ),
-        );
+      var granted = widget.controller.notificationsEnabled;
+      if (!widget.controller.notificationPromptSeen || !widget.controller.notificationsEnabled) {
+        granted = await NotificationService.instance.requestPermission();
+        await widget.controller.setNotificationsEnabled(granted);
+        await widget.controller.setNotificationPromptSeen();
+        if (granted && mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('🔔 Rappels de 12 h activés. On garde le cap !')),
+          );
+        }
       }
+      await ReminderService.refreshSchedule();
     } catch (error) {
       debugPrint('Activation des rappels impossible : $error');
+      await ReminderService.refreshSchedule();
     }
   }
 

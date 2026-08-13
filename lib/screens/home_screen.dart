@@ -67,6 +67,8 @@ class HomeScreen extends StatelessWidget {
                       streakDays: controller.streakDays,
                       badgeCount: controller.unlockedBadgeCount,
                     ),
+                    const SizedBox(height: 16),
+                    _DailyMissions(controller: controller),
                     const SizedBox(height: 28),
                     SectionTitle(
                       title: nextCourse == null
@@ -132,6 +134,28 @@ class HomeScreen extends StatelessWidget {
     }
     return null;
   }
+}
+
+class _DailyMissions extends StatelessWidget {
+  const _DailyMissions({required this.controller});
+  final AppController controller;
+  @override
+  Widget build(BuildContext context) {
+    final done = controller.dailyMissionCompletedCount;
+    return Card(child: Padding(padding: const EdgeInsets.all(18), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Row(children: [const Icon(Icons.flag_rounded, color: AppColors.coral), const SizedBox(width: 8), const Expanded(child: Text('Missions du jour', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w900))), Text('$done/3', style: const TextStyle(color: AppColors.burgundy, fontWeight: FontWeight.w900))]),
+      const SizedBox(height: 7), const Text('Petites missions, grosses vibes géomatiques. 😄', style: TextStyle(fontSize: 12)), const SizedBox(height: 13),
+      _MissionLine(icon: Icons.flash_on_rounded, text: 'Lancer 1 mode rapide', done: controller.dailyQuick >= 1),
+      _MissionLine(icon: Icons.check_circle_rounded, text: 'Obtenir 5 bonnes réponses', done: controller.dailyCorrect >= 5),
+      _MissionLine(icon: Icons.timer_rounded, text: 'Terminer 1 mini-défi chronométré', done: controller.dailyTimed >= 1),
+      const SizedBox(height: 10), if (done == 3) FilledButton.icon(onPressed: controller.dailyXp >= 150 ? null : controller.claimDailyBonus, icon: const Icon(Icons.card_giftcard_rounded), label: Text(controller.dailyXp >= 150 ? 'Bonus déjà réclamé 🎁' : 'Réclamer +50 XP 🎁')),
+    ])));
+  }
+}
+class _MissionLine extends StatelessWidget {
+  const _MissionLine({required this.icon, required this.text, required this.done});
+  final IconData icon; final String text; final bool done;
+  @override Widget build(BuildContext context) => Padding(padding: const EdgeInsets.only(bottom: 8), child: Row(children: [Icon(done ? Icons.check_circle_rounded : icon, size: 20, color: done ? AppColors.success : AppColors.burgundy), const SizedBox(width: 9), Expanded(child: Text(text, style: TextStyle(fontSize: 12, fontWeight: done ? FontWeight.w800 : FontWeight.w600, decoration: done ? TextDecoration.lineThrough : null)))]));
 }
 
 class _CertificationTeaser extends StatelessWidget {

@@ -107,3 +107,7 @@ Le bouton visible **Politique de confidentialité** ouvre la page publique sans 
 ## Rappels d’apprentissage
 
 Au premier lancement, l’application propose d’activer les notifications. Après l’autorisation Android, un travail périodique local prépare un rappel environ toutes les 12 heures. Android peut décaler légèrement son exécution selon l’économie de batterie. L’option reste modifiable depuis l’onglet **Progression**.
+
+
+## Version 1.4.0 — mode ludique
+Mode rapide 5/10 questions, sprint 20 secondes, missions quotidiennes, 3 vies, bonus XP, animations et messages humoristiques. Les rappels 12 h sont programmés automatiquement ; Android conserve le contrôle final de l’autorisation système.

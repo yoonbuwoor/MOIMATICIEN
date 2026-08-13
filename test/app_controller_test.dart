@@ -52,3 +52,19 @@ void main() {
     expect(controller.streakDays, 0);
   });
 }
+
+
+  test('les modes rapides, vies et missions quotidiennes fonctionnent', () async {
+    SharedPreferences.setMockInitialValues(<String, Object>{});
+    final controller = await AppController.create();
+    expect(controller.lives, 3);
+    final reward = await controller.recordQuickChallenge(correct: 5, total: 5);
+    expect(reward, greaterThan(0));
+    expect(controller.dailyQuick, 1);
+    expect(controller.dailyCorrect, 5);
+    expect(controller.dailyMissionCompletedCount, greaterThanOrEqualTo(2));
+    await controller.loseLife();
+    expect(controller.lives, 2);
+    await controller.addLife();
+    expect(controller.lives, 3);
+  });

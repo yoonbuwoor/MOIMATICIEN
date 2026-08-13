@@ -6,6 +6,7 @@ import '../state/app_controller.dart';
 import '../theme/app_theme.dart';
 import '../widgets/learning_widgets.dart';
 import 'quiz_screen.dart';
+import 'quick_challenge_screen.dart';
 
 class QuizHubScreen extends StatelessWidget {
   const QuizHubScreen({required this.controller, super.key});
@@ -37,10 +38,12 @@ class QuizHubScreen extends StatelessWidget {
                 eyebrow: 'Entraînement',
                 title: 'Quiz de géomatique',
                 subtitle:
-                    '34 quiz thématiques de 20 questions, avec correction immédiate et explication après chaque réponse.',
+                    '34 quiz thématiques, plus des modes express et des sprints pour apprendre sans s’ennuyer.',
               ),
               const SizedBox(height: 22),
               _QuizSummary(controller: controller),
+              const SizedBox(height: 16),
+              _QuickModes(controller: controller),
               const SizedBox(height: 28),
               Text(
                 'Choisissez un thème',
@@ -69,6 +72,24 @@ class QuizHubScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+class _QuickModes extends StatelessWidget {
+  const _QuickModes({required this.controller});
+  final AppController controller;
+  @override
+  Widget build(BuildContext context) => Row(children: [
+    Expanded(child: _ModeButton(icon: Icons.flash_on_rounded, title: '5 questions', subtitle: '⚡ express', onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => QuickChallengeScreen(controller: controller, count: 5))))),
+    const SizedBox(width: 8),
+    Expanded(child: _ModeButton(icon: Icons.casino_rounded, title: '10 questions', subtitle: '🎲 aléatoire', onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => QuickChallengeScreen(controller: controller, count: 10))))),
+    const SizedBox(width: 8),
+    Expanded(child: _ModeButton(icon: Icons.timer_rounded, title: 'Sprint', subtitle: '20 s/question', onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => QuickChallengeScreen(controller: controller, count: 5, timed: true))))),
+  ]);
+}
+class _ModeButton extends StatelessWidget {
+  const _ModeButton({required this.icon, required this.title, required this.subtitle, required this.onTap});
+  final IconData icon; final String title; final String subtitle; final VoidCallback onTap;
+  @override Widget build(BuildContext context) => Material(color: Colors.white, borderRadius: BorderRadius.circular(20), child: InkWell(onTap: onTap, borderRadius: BorderRadius.circular(20), child: Padding(padding: const EdgeInsets.all(12), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Icon(icon, color: AppColors.coral), const SizedBox(height: 8), Text(title, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 12)), const SizedBox(height: 2), Text(subtitle, style: const TextStyle(fontSize: 9, color: AppColors.muted))])));
 }
 
 class _QuizSummary extends StatelessWidget {

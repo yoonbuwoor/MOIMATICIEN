@@ -80,20 +80,21 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('le premier lancement propose les rappels sans les imposer', (
+  testWidgets('les rappels sont affichés comme automatiques sans bouton de désactivation', (
     tester,
   ) async {
-    SharedPreferences.setMockInitialValues(<String, Object>{});
+    SharedPreferences.setMockInitialValues(<String, Object>{
+      'notifications.promptSeen': true,
+      'notifications.enabled': true,
+    });
     final controller = await AppController.create();
 
     await tester.pumpWidget(MoiGeomaticienApp(controller: controller));
     await tester.pumpAndSettle();
-
-    expect(find.text('Un rappel toutes les 12 h ?'), findsOneWidget);
-    await tester.tap(find.text('Pas maintenant'));
+    await tester.tap(find.text('Progression'));
     await tester.pumpAndSettle();
 
-    expect(controller.notificationPromptSeen, isTrue);
-    expect(controller.notificationsEnabled, isFalse);
+    expect(find.text('Rappels automatiques • 12 h'), findsOneWidget);
+    expect(find.byType(Switch), findsNothing);
   });
 }

@@ -40,9 +40,10 @@ class _QuizScreenState extends State<QuizScreen> {
 
   void _selectAnswer(int index) {
     if (_answered) return;
+    final correct = index == _question.correctIndex;
     setState(() {
       _selectedIndex = index;
-      if (index == _question.correctIndex) {
+      if (correct) {
         _score++;
         _combo++;
         if (_combo > _bestCombo) _bestCombo = _combo;
@@ -50,6 +51,7 @@ class _QuizScreenState extends State<QuizScreen> {
         _combo = 0;
       }
     });
+    if (!correct) widget.controller.loseLife();
   }
 
   Future<void> _continue() async {
@@ -128,7 +130,8 @@ class _QuizScreenState extends State<QuizScreen> {
                     ),
                   ),
                 ],
-                const Spacer(),
+                Row(children: List.generate(3, (i) => Icon(i < widget.controller.lives ? Icons.favorite_rounded : Icons.favorite_border_rounded, color: AppColors.coral, size: 17))),
+                const SizedBox(width: 8),
                 Text(
                   '$_score bonne${_score > 1 ? 's' : ''} réponse${_score > 1 ? 's' : ''}',
                   style: Theme.of(context).textTheme.bodyMedium,
@@ -427,20 +430,24 @@ class QuizResultScreen extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  Container(
-                    width: 92,
-                    height: 92,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.12),
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white24, width: 2),
-                    ),
-                    child: Icon(
-                      passed
-                          ? Icons.emoji_events_rounded
-                          : Icons.menu_book_rounded,
-                      color: passed ? const Color(0xFFFFC04D) : AppColors.coral,
-                      size: 50,
+                  TweenAnimationBuilder<double>(
+                    tween: Tween(begin: .55, end: 1),
+                    duration: const Duration(milliseconds: 650),
+                    curve: Curves.elasticOut,
+                    builder: (context, value, child) => Transform.scale(scale: value, child: child),
+                    child: Container(
+                      width: 92,
+                      height: 92,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.12),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white24, width: 2),
+                      ),
+                      child: Icon(
+                        passed ? Icons.emoji_events_rounded : Icons.menu_book_rounded,
+                        color: passed ? const Color(0xFFFFC04D) : AppColors.coral,
+                        size: 50,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 18),
