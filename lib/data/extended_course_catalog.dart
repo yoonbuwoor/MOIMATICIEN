@@ -8,7 +8,6 @@ abstract class ExtendedCourseCatalog {
       subtitle:
           'Mesurer angles, distances et altitudes avec une méthode de terrain rigoureuse.',
       category: 'Topographie',
-      durationMinutes: 34,
       level: CourseLevel.intermediaire,
       imageAsset: 'assets/images/topographie_geodesie.png',
       accentValue: 0xFFEC1745,
@@ -68,7 +67,6 @@ abstract class ExtendedCourseCatalog {
       subtitle:
           'Datums, ellipsoïdes et transformations pour superposer les données sans décalage.',
       category: 'Référentiels',
-      durationMinutes: 31,
       level: CourseLevel.avance,
       imageAsset: 'assets/images/topographie_geodesie.png',
       accentValue: 0xFF5A0B68,
@@ -128,7 +126,6 @@ abstract class ExtendedCourseCatalog {
       subtitle:
           'Structurer, interroger et sécuriser de grands volumes avec PostGIS.',
       category: 'Données',
-      durationMinutes: 38,
       level: CourseLevel.intermediaire,
       imageAsset: 'assets/images/geodata_automation.png',
       accentValue: 0xFF8A124B,
@@ -188,7 +185,6 @@ abstract class ExtendedCourseCatalog {
       subtitle:
           'Publier des cartes rapides avec tuiles, API et standards interopérables.',
       category: 'Web SIG',
-      durationMinutes: 35,
       level: CourseLevel.intermediaire,
       imageAsset: 'assets/images/geodata_automation.png',
       accentValue: 0xFFFF6338,
@@ -248,7 +244,6 @@ abstract class ExtendedCourseCatalog {
       subtitle:
           'Explorer la dépendance spatiale et estimer une variable entre les mesures.',
       category: 'Analyse',
-      durationMinutes: 40,
       level: CourseLevel.avance,
       imageAsset: 'assets/images/terrain_geostatistics.png',
       accentValue: 0xFFB40B4C,
@@ -308,7 +303,6 @@ abstract class ExtendedCourseCatalog {
       subtitle:
           'Du relief brut aux pentes, bassins versants et réseaux d’écoulement.',
       category: 'Relief',
-      durationMinutes: 37,
       level: CourseLevel.intermediaire,
       imageAsset: 'assets/images/terrain_geostatistics.png',
       accentValue: 0xFF5A0B68,
@@ -368,7 +362,6 @@ abstract class ExtendedCourseCatalog {
       subtitle:
           'Parcelles, droits et plans fiables au service de la gestion du territoire.',
       category: 'Foncier',
-      durationMinutes: 33,
       level: CourseLevel.intermediaire,
       imageAsset: 'assets/images/urban_cadastre.png',
       accentValue: 0xFF7E063F,
@@ -428,7 +421,6 @@ abstract class ExtendedCourseCatalog {
       subtitle:
           'Automatiser des traitements reproductibles sans perdre le contrôle des données.',
       category: 'Automatisation',
-      durationMinutes: 42,
       level: CourseLevel.avance,
       imageAsset: 'assets/images/geodata_automation.png',
       accentValue: 0xFFEC1745,
@@ -488,7 +480,6 @@ abstract class ExtendedCourseCatalog {
       subtitle:
           'Concevoir un formulaire terrain, synchroniser et contrôler les observations.',
       category: 'Terrain',
-      durationMinutes: 30,
       level: CourseLevel.debutant,
       imageAsset: 'assets/images/field_collaboration.png',
       accentValue: 0xFFFF6338,
@@ -548,7 +539,6 @@ abstract class ExtendedCourseCatalog {
       subtitle:
           'Combiner aléas, enjeux et vulnérabilité pour appuyer une décision responsable.',
       category: 'Environnement',
-      durationMinutes: 39,
       level: CourseLevel.intermediaire,
       imageAsset: 'assets/images/environment_risk.png',
       accentValue: 0xFF168A65,

@@ -1,5 +1,6 @@
 import '../models/learning_models.dart';
 import 'extended_course_catalog.dart';
+import 'professional_course_catalog.dart';
 
 abstract class CourseCatalog {
   static final List<Course> courses = <Course>[
@@ -9,7 +10,6 @@ abstract class CourseCatalog {
       subtitle:
           'Les données géospatiales, leurs formes et le cycle complet d’un projet.',
       category: 'Fondamentaux',
-      durationMinutes: 20,
       level: CourseLevel.debutant,
       imageAsset: 'assets/images/cartographie.webp',
       accentValue: 0xFFEC1745,
@@ -74,7 +74,6 @@ abstract class CourseCatalog {
       subtitle:
           'Échelle, sémiologie graphique, relief et mise en page d’une carte lisible.',
       category: 'Cartographie',
-      durationMinutes: 25,
       level: CourseLevel.debutant,
       imageAsset: 'assets/images/cartographie.webp',
       accentValue: 0xFFFF6338,
@@ -135,7 +134,6 @@ abstract class CourseCatalog {
       subtitle:
           'Organiser des couches, interroger l’espace et produire une analyse reproductible.',
       category: 'SIG',
-      durationMinutes: 32,
       level: CourseLevel.debutant,
       imageAsset: 'assets/images/sig.webp',
       accentValue: 0xFF8A124B,
@@ -206,7 +204,6 @@ abstract class CourseCatalog {
       subtitle:
           'Positionnement, précision, RTK et choix du système de référence.',
       category: 'Terrain',
-      durationMinutes: 28,
       level: CourseLevel.intermediaire,
       imageAsset: 'assets/images/gnss.webp',
       accentValue: 0xFF5A0B68,
@@ -266,7 +263,6 @@ abstract class CourseCatalog {
       subtitle:
           'Résolutions, bandes spectrales et extraction d’informations depuis l’espace.',
       category: 'Imagerie',
-      durationMinutes: 30,
       level: CourseLevel.intermediaire,
       imageAsset: 'assets/images/teledetection.webp',
       accentValue: 0xFFB40B4C,
@@ -326,7 +322,6 @@ abstract class CourseCatalog {
       subtitle:
           'Du plan de vol à l’orthomosaïque, au nuage de points et au contrôle qualité.',
       category: 'Drone',
-      durationMinutes: 52,
       level: CourseLevel.intermediaire,
       imageAsset: 'assets/images/drone_photogrammetry.png',
       accentValue: 0xFF7E063F,
@@ -337,99 +332,53 @@ abstract class CourseCatalog {
       ],
       sections: [
         CourseSection(
-          title: '1. Géométrie de l’acquisition',
+          title: '1. Acquisition et qualité des images',
           body:
-              'La photogrammétrie reconstruit la géométrie d’une scène à partir d’images qui se recouvrent. Les détails communs sont identifiés sur plusieurs clichés, puis les positions de caméra et les points 3D sont estimés. Un recouvrement longitudinal et latéral suffisant est indispensable.',
+              'La photogrammétrie reconstruit une scène à partir d’images qui se recouvrent. Le GSD décrit la dimension au sol d’un pixel ; la hauteur, le capteur et la focale l’influencent. La netteté, une lumière stable et des recouvrements adaptés comptent davantage qu’un volume élevé de mauvaises images.',
           keyPoints: [
             'La texture du terrain aide le logiciel à identifier des points homologues.',
-            'L’eau, les surfaces brillantes ou uniformes sont difficiles à reconstruire.',
-            'Les virages doivent être prévus hors de la zone utile lorsque cela est possible.',
+            'L’eau et les surfaces uniformes sont difficiles à reconstruire.',
+            'Une vitesse excessive favorise le flou de mouvement.',
           ],
         ),
         CourseSection(
-          title: '2. GSD, hauteur et netteté',
+          title: '2. Appuis au sol et contrôle indépendant',
           body:
-              'Le GSD représente la dimension au sol d’un pixel. Il dépend notamment de la hauteur de vol, de la focale et du capteur. Voler plus bas réduit le GSD, mais augmente le nombre d’images, le temps de mission et les risques opérationnels.',
+              'Les GCP participent au géoréférencement et à l’ajustement du modèle. Les checkpoints restent indépendants afin d’évaluer honnêtement l’erreur finale. Tous les points doivent être mesurés dans un référentiel connu et répartis sur la zone.',
           keyPoints: [
-            'Choisir le GSD selon le plus petit objet à distinguer et la précision attendue.',
-            'Une vitesse trop élevée ou une lumière insuffisante favorise le flou de mouvement.',
-            'Une résolution fine ne corrige pas une mauvaise géométrie de prise de vue.',
-          ],
-        ),
-        CourseSection(
-          title: '3. GCP et points de contrôle',
-          body:
-              'Les points d’appui au sol, ou GCP, participent à l’ajustement du modèle. Les points de contrôle indépendants ne servent pas au calcul : ils évaluent l’erreur finale. Les confondre produit une estimation trop optimiste de la précision.',
-          keyPoints: [
-            'Répartir les GCP en périphérie et à l’intérieur de la zone.',
-            'Mesurer les points dans un référentiel et avec une précision connus.',
-            'Réserver des checkpoints indépendants pour le contrôle.',
+            'Ne pas utiliser le même point comme appui et comme contrôle.',
+            'Répartir les points en périphérie et à l’intérieur.',
+            'Contrôler leur visibilité sur plusieurs images.',
           ],
           fieldNote:
-              'Inspectez chaque cible sur plusieurs images avant de l’utiliser dans l’ajustement.',
+              'Réservez des checkpoints indépendants avant de lancer le traitement.',
         ),
         CourseSection(
-          title: '4. Produits et contrôle qualité',
+          title: '3. Produits et vérifications essentielles',
           body:
-              'Le nuage de points décrit la surface en 3D. Le MNS inclut bâtiments et végétation, tandis qu’un MNT cherche à représenter le sol nu. L’orthomosaïque corrige la perspective et le relief pour permettre des mesures planimétriques cohérentes.',
+              'Le traitement produit notamment un nuage de points, un MNS, parfois un MNT et une orthomosaïque. Avant livraison, inspectez les trous, déformations, doubles objets et raccords, puis annoncez la précision à partir des checkpoints et non de la seule résolution.',
           keyPoints: [
-            'Contrôler les trous, déformations, doubles objets et raccords.',
-            'Analyser les erreurs sur les checkpoints, pas seulement sur les GCP.',
-            'Documenter le GSD, le référentiel, la date, le capteur et le logiciel.',
-            'Ne pas confondre précision relative et précision absolue.',
+            'Le MNS inclut les objets de surface ; le MNT cherche le sol nu.',
+            'Documenter le GSD, le SCR, la date et la méthode.',
+            'Distinguer précision relative et précision absolue.',
           ],
         ),
         CourseSection(
-          title: '5. Cadre légal, autorisations et sécurité',
+          title: '4. Sécurité et suite du parcours',
           body:
-              'Une mission commence par la vérification des règles applicables au lieu, à la hauteur, au type d’opération et aux personnes survolées. Les exigences varient selon le pays et peuvent évoluer : l’autorité aéronautique compétente reste la référence. Le pilote doit aussi protéger la vie privée, anticiper les obstacles et définir une zone d’exclusion au sol.',
+              'Avant toute mission, vérifiez les règles de l’autorité aéronautique compétente, les autorisations, la météo, les obstacles et la vie privée. Définissez une zone de décollage sûre, une marge autour des personnes et une procédure d’urgence. Ce module reste volontairement introductif.',
           keyPoints: [
-            'Vérifier les restrictions de l’espace aérien et obtenir les autorisations nécessaires.',
-            'Ne jamais survoler une foule et préserver une marge sûre autour des personnes et obstacles.',
-            'Préparer une procédure d’urgence, un point de décollage sécurisé et un observateur si nécessaire.',
-            'Informer les propriétaires et limiter les images aux besoins réels de la mission.',
+            'Ne jamais survoler une foule.',
+            'Adapter le vol aux règles et conditions réelles du site.',
+            'Interrompre la mission si la sécurité n’est plus garantie.',
           ],
           fieldNote:
-              'La carte d’une application ne remplace jamais les consignes de l’autorité aéronautique ni l’observation du site.',
-        ),
-        CourseSection(
-          title: '6. Plan de mission et contraintes réelles',
-          body:
-              'Le plan de vol traduit le besoin cartographique en trajectoires, hauteur, vitesse, recouvrements et orientation de caméra. Le relief, le vent, la température, l’autonomie des batteries, les lignes électriques et les zones sans positionnement fiable peuvent imposer une adaptation. Une reconnaissance du site permet de valider les hypothèses avant le décollage.',
-          keyPoints: [
-            'Calculer la hauteur à partir du GSD visé et conserver une distance sûre au terrain.',
-            'Augmenter le recouvrement sur les reliefs, la végétation dense ou les scènes complexes.',
-            'Prévoir les batteries avec une réserve et interrompre la mission si les conditions deviennent défavorables.',
-            'Utiliser des passes croisées ou obliques lorsque la reconstruction des façades est nécessaire.',
-          ],
-        ),
-        CourseSection(
-          title: '7. Traitement photogrammétrique reproductible',
-          body:
-              'Le traitement suit généralement l’alignement des images, l’optimisation des caméras, la densification, la classification du nuage, la création des modèles de surface puis l’orthorectification. Chaque étape doit être contrôlée avant de lancer la suivante afin d’éviter de propager une erreur ou de gaspiller du temps de calcul.',
-          keyPoints: [
-            'Écarter les images floues ou incohérentes après une inspection méthodique.',
-            'Vérifier la couverture, les résidus de calibration et la distribution des points homologues.',
-            'Classer le sol avec prudence avant de produire un MNT.',
-            'Conserver les paramètres, versions logicielles et journaux de traitement.',
-          ],
-        ),
-        CourseSection(
-          title: '8. Livrables, précision et rapport de mission',
-          body:
-              'Un livrable utile ne se résume pas à une image. Il comprend les produits adaptés au besoin, leur système de référence, leur résolution, la méthode de traitement, les limites et les résultats de contrôle. L’erreur quadratique moyenne sur des checkpoints indépendants peut résumer la précision, mais elle doit être accompagnée du nombre et de la répartition des points.',
-          keyPoints: [
-            'Livrer uniquement les produits validés : orthomosaïque, nuage, MNS, MNT, courbes ou modèle 3D selon le mandat.',
-            'Indiquer les unités, le SCR horizontal, le référentiel vertical et la date d’acquisition.',
-            'Présenter les erreurs par axe et localiser les zones moins fiables.',
-            'Archiver les données sources selon une politique de sécurité et de conservation définie.',
-          ],
-          fieldNote:
-              'Pour approfondir les missions, la réglementation et les outils drone, téléchargez l’application Drone Atlas Academy.',
+              'Téléchargez l’application Drone Atlas Academy pour approfondir la planification, la réglementation, les équipements et les traitements.',
         ),
       ],
     ),
     ...ExtendedCourseCatalog.courses,
+    ...ProfessionalCourseCatalog.courses,
   ];
 
   static Course byId(String id) =>

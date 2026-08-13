@@ -188,7 +188,7 @@ class _CourseImage extends StatelessWidget {
             child: Row(
               children: [
                 _Pill(
-                  label: '${course.durationMinutes} min',
+                  label: '≈ ${course.readingMinutes} min',
                   icon: Icons.schedule_rounded,
                   foreground: Colors.white,
                   background: const Color(0xB8241620),

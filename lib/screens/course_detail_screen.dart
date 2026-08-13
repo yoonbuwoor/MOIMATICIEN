@@ -89,13 +89,13 @@ class CourseDetailScreen extends StatelessWidget {
                             Row(
                               children: [
                                 const Icon(
-                                  Icons.schedule_rounded,
+                                  Icons.menu_book_rounded,
                                   size: 16,
                                   color: Colors.white70,
                                 ),
                                 const SizedBox(width: 5),
                                 Text(
-                                  '${course.durationMinutes} min',
+                                  '≈ ${course.readingMinutes} min de lecture',
                                   style: const TextStyle(
                                     color: Colors.white70,
                                     fontWeight: FontWeight.w600,
@@ -464,7 +464,7 @@ class _QuizInvitation extends StatelessWidget {
           ),
           const SizedBox(height: 7),
           const Text(
-            'Répondez aux 10 questions, gagnez des XP et découvrez l’explication immédiatement.',
+            'Répondez aux 20 questions, gagnez des XP et découvrez l’explication immédiatement.',
             style: TextStyle(
               color: Color(0xFFE0D3DA),
               fontSize: 13,

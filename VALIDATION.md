@@ -1,16 +1,17 @@
-# Validation de la version 1.2.0+3
+# Validation de la version 1.3.0+4
 
 Contrôles effectués dans l’espace de travail :
 
 - `flutter pub get` avec Flutter 3.44.9 et Dart 3.12.2 : réussi ;
 - `flutter analyze --no-fatal-infos --no-fatal-warnings` : aucun problème ;
-- `flutter test` : 14 tests sur 14 réussis ;
-- 16 identifiants de cours uniques ;
-- 160 identifiants de questions uniques ;
+- `flutter test` : 16 tests sur 16 réussis ;
+- 34 identifiants de cours uniques ;
+- 680 identifiants de questions uniques ;
 - 12 identifiants de parcours de certification uniques ;
-- 8 parties pédagogiques dans le cours Photogrammétrie par drone ;
-- 10 questions pour chacun des 16 cours ;
-- 17 définitions de quiz, dont le défi transversal de 20 questions ;
+- 4 parties pédagogiques dans le cours Photogrammétrie par drone ;
+- temps de lecture calculés entre 3 et 5 minutes selon le contenu ;
+- 20 questions pour chacun des 34 cours ;
+- 35 définitions de quiz, dont le défi transversal de 68 questions ;
 - toutes les images référencées existent ;
 - manifeste Android XML valide ;
 - `pubspec.yaml` et `.github/workflows/main.yml` valides ;

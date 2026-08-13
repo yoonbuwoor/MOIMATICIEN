@@ -33,7 +33,6 @@ class Course {
     required this.title,
     required this.subtitle,
     required this.category,
-    required this.durationMinutes,
     required this.level,
     required this.imageAsset,
     required this.accentValue,
@@ -45,12 +44,35 @@ class Course {
   final String title;
   final String subtitle;
   final String category;
-  final int durationMinutes;
   final CourseLevel level;
   final String imageAsset;
   final int accentValue;
   final List<String> objectives;
   final List<CourseSection> sections;
+
+  /// Estimation volontairement prudente, calculée sur le contenu réellement
+  /// affiché (180 mots/minute), avec un court temps pour parcourir les listes.
+  int get readingMinutes {
+    final text = <String>[
+      title,
+      subtitle,
+      ...objectives,
+      for (final section in sections) ...[
+        section.title,
+        section.body,
+        ...section.keyPoints,
+        if (section.fieldNote != null) section.fieldNote!,
+      ],
+    ].join(' ');
+    final words = text
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((word) => word.isNotEmpty)
+        .length;
+    final reading = (words / 180).ceil();
+    final scanTime = (sections.length / 3).ceil();
+    return (reading + scanTime).clamp(2, 20);
+  }
 }
 
 class QuizQuestion {

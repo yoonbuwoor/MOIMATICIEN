@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.3.0+4
+
+- extension substantielle de 16 à 34 cours hors ligne ;
+- ajout de 18 cours professionnels et sectoriels : QGIS, ArcGIS Pro, Earth Engine, LiDAR, radar SAR, occupation du sol, agriculture, santé, transport, urbanisme, géomarketing, OpenStreetMap, métadonnées, GeoServer, kit terrain, IA géospatiale, gestion de projet et portfolio ;
+- passage de 160 à 680 questions corrigées ;
+- chaque quiz thématique contient désormais 20 questions ;
+- défi du géomaticien porté à 68 questions, avec deux questions par cours ;
+- remplacement des durées manuelles exagérées par une estimation dynamique fondée sur le nombre réel de mots ;
+- réduction du module Photogrammétrie drone de 8 à 4 parties introductives ;
+- maintien du renvoi vers Drone Atlas Academy pour approfondir le drone ;
+- workflow APK + AAB renommé pour la version 1.3.0 et limite de 94 Mio conservée.
+
 ## 1.2.0+3
 
 - ajout d’un onglet Certifications avec 12 parcours couvrant collectivités, BTP, environnement, agriculture, foncier, data, numérique, humanitaire, drone et santé ;

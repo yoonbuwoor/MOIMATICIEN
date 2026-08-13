@@ -1,12 +1,15 @@
 import '../models/learning_models.dart';
+import 'course_catalog.dart';
 import 'extended_quiz_catalog.dart';
+import 'professional_quiz_catalog.dart';
+import 'quiz_expansion_catalog.dart';
 
 abstract class QuizCatalog {
   static final List<QuizDefinition> definitions = <QuizDefinition>[
     QuizDefinition(
       id: 'quiz_bases',
       title: 'Bases de la géomatique',
-      subtitle: '10 questions • Fondamentaux',
+      subtitle: '20 questions • Fondamentaux',
       accentValue: 0xFFEC1745,
       iconName: 'explore',
       courseId: 'bases_geomatique',
@@ -14,7 +17,7 @@ abstract class QuizCatalog {
     QuizDefinition(
       id: 'quiz_carto',
       title: 'Cartographie',
-      subtitle: '10 questions • Échelle et sémiologie',
+      subtitle: '20 questions • Échelle et sémiologie',
       accentValue: 0xFFFF6338,
       iconName: 'map',
       courseId: 'cartographie',
@@ -22,7 +25,7 @@ abstract class QuizCatalog {
     QuizDefinition(
       id: 'quiz_sig',
       title: 'SIG et analyse spatiale',
-      subtitle: '10 questions • Couches et traitements',
+      subtitle: '20 questions • Couches et traitements',
       accentValue: 0xFF8A124B,
       iconName: 'layers',
       courseId: 'sig_qgis',
@@ -30,7 +33,7 @@ abstract class QuizCatalog {
     QuizDefinition(
       id: 'quiz_gnss',
       title: 'GNSS et coordonnées',
-      subtitle: '10 questions • Terrain et précision',
+      subtitle: '20 questions • Terrain et précision',
       accentValue: 0xFF5A0B68,
       iconName: 'satellite',
       courseId: 'gnss_coordonnees',
@@ -38,7 +41,7 @@ abstract class QuizCatalog {
     QuizDefinition(
       id: 'quiz_teledetection',
       title: 'Télédétection',
-      subtitle: '10 questions • Images et spectre',
+      subtitle: '20 questions • Images et spectre',
       accentValue: 0xFFB40B4C,
       iconName: 'image',
       courseId: 'teledetection',
@@ -46,16 +49,17 @@ abstract class QuizCatalog {
     QuizDefinition(
       id: 'quiz_photogrammetrie',
       title: 'Photogrammétrie drone',
-      subtitle: '10 questions • Acquisition et qualité',
+      subtitle: '20 questions • Acquisition et qualité',
       accentValue: 0xFF7E063F,
       iconName: 'drone',
       courseId: 'photogrammetrie_drone',
     ),
     ...ExtendedQuizCatalog.definitions,
+    ...ProfessionalQuizCatalog.definitions,
     QuizDefinition(
       id: 'defi_geomaticien',
       title: 'Défi du géomaticien',
-      subtitle: '20 questions • Tous les domaines',
+      subtitle: '68 questions • Tous les domaines',
       accentValue: 0xFF241620,
       iconName: 'trophy',
     ),
@@ -731,6 +735,8 @@ abstract class QuizCatalog {
           'Les checkpoints non utilisés dans l’ajustement évaluent le résultat sur des références indépendantes.',
     ),
     ...ExtendedQuizCatalog.questions,
+    ...QuizExpansionCatalog.questions,
+    ...ProfessionalQuizCatalog.questions,
   ];
 
   static QuizDefinition quizForCourse(String courseId) =>
@@ -743,31 +749,15 @@ abstract class QuizCatalog {
           .toList(growable: false);
     }
 
-    const challengeIds = <String>[
-      'b03',
-      'c04',
-      's06',
-      'g05',
-      't08',
-      'p04',
-      'to03',
-      'ge06',
-      'db08',
-      'wm04',
-      'gs07',
-      'mh06',
-      'cf03',
-      'py08',
-      'cq05',
-      'er09',
-      'b10',
-      'db10',
-      'gs10',
-      'er10',
-    ];
-    final questionsById = <String, QuizQuestion>{
-      for (final question in questions) question.id: question,
-    };
-    return challengeIds.map((id) => questionsById[id]!).toList(growable: false);
+    final challenge = <QuizQuestion>[];
+    for (final course in CourseCatalog.courses) {
+      final thematic = questions
+          .where((question) => question.courseId == course.id)
+          .toList(growable: false);
+      if (thematic.isEmpty) continue;
+      challenge.add(thematic[course.id.length % thematic.length]);
+      challenge.add(thematic[(course.id.length + 9) % thematic.length]);
+    }
+    return challenge;
   }
 }

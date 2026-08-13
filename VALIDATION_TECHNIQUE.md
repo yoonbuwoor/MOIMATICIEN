@@ -1,11 +1,12 @@
-# Validation technique — Moi Géomaticien 1.2.0
+# Validation technique — Moi Géomaticien 1.3.0
 
 ## Contenu contrôlé
 
-- 16 cours et plus de 64 sections pédagogiques ;
-- 160 questions uniques ;
-- 16 quiz thématiques de 10 questions ;
-- 1 défi transversal de 20 questions ;
+- 34 cours et plus de 136 sections pédagogiques ;
+- 680 questions uniques ;
+- 34 quiz thématiques de 20 questions ;
+- 1 défi transversal de 68 questions ;
+- estimation des temps de lecture dérivée du contenu, sans durée manuelle ;
 - 12 illustrations originales, dont 8 scènes haute définition ;
 - 12 parcours de certification sectoriels ;
 - illustrations haute définition dédiées aux certifications et au drone ;
@@ -15,7 +16,7 @@
 
 - analyse syntaxique de tous les fichiers Dart : réussie ;
 - analyse Flutter 3.44.9 : aucun problème ;
-- quatorze tests unitaires et widgets : tous réussis ;
+- seize tests unitaires et widgets : tous réussis ;
 - unicité des identifiants de cours et de questions : contrôlée ;
 - cohérence des chemins d’assets : contrôlée ;
 - validation YAML du workflow GitHub Actions : réussie ;

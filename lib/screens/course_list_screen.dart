@@ -62,7 +62,7 @@ class _CourseListScreenState extends State<CourseListScreen> {
                 eyebrow: 'Bibliothèque',
                 title: 'Cours de géomatique',
                 subtitle:
-                    'Progressez à votre rythme avec des fiches illustrées et directement utiles.',
+                    '34 cours hors ligne, des fondamentaux aux usages professionnels et sectoriels.',
               ),
               const SizedBox(height: 22),
               TextField(

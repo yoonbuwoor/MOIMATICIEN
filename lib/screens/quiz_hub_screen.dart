@@ -37,7 +37,7 @@ class QuizHubScreen extends StatelessWidget {
                 eyebrow: 'Entraînement',
                 title: 'Quiz de géomatique',
                 subtitle:
-                    'Une correction immédiate et une explication claire après chaque réponse.',
+                    '34 quiz thématiques de 20 questions, avec correction immédiate et explication après chaque réponse.',
               ),
               const SizedBox(height: 22),
               _QuizSummary(controller: controller),
@@ -186,6 +186,17 @@ class _QuizCard extends StatelessWidget {
                       definition.subtitle,
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
+                    if (definition.courseId != null) ...[
+                      const SizedBox(height: 7),
+                      Text(
+                        '${QuizCatalog.questionsFor(definition).length} questions corrigées',
+                        style: TextStyle(
+                          color: accent,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ],
                     if (bestScore != null) ...[
                       const SizedBox(height: 7),
                       Text(

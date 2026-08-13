@@ -5,7 +5,7 @@ abstract class ExtendedQuizCatalog {
     QuizDefinition(
       id: 'quiz_topographie',
       title: 'Topographie et nivellement',
-      subtitle: '10 questions • Mesures et fermetures',
+      subtitle: '20 questions • Mesures et fermetures',
       accentValue: 0xFFEC1745,
       iconName: 'topography',
       courseId: 'topographie_nivellement',
@@ -13,7 +13,7 @@ abstract class ExtendedQuizCatalog {
     QuizDefinition(
       id: 'quiz_geodesie',
       title: 'Géodésie et projections',
-      subtitle: '10 questions • Datums et SCR',
+      subtitle: '20 questions • Datums et SCR',
       accentValue: 0xFF5A0B68,
       iconName: 'globe',
       courseId: 'geodesie_projections',
@@ -21,7 +21,7 @@ abstract class ExtendedQuizCatalog {
     QuizDefinition(
       id: 'quiz_database',
       title: 'Bases de données spatiales',
-      subtitle: '10 questions • SQL et PostGIS',
+      subtitle: '20 questions • SQL et PostGIS',
       accentValue: 0xFF8A124B,
       iconName: 'database',
       courseId: 'bases_donnees_spatiales',
@@ -29,7 +29,7 @@ abstract class ExtendedQuizCatalog {
     QuizDefinition(
       id: 'quiz_webmapping',
       title: 'Webmapping et OGC',
-      subtitle: '10 questions • Services et tuiles',
+      subtitle: '20 questions • Services et tuiles',
       accentValue: 0xFFFF6338,
       iconName: 'web',
       courseId: 'webmapping_ogc',
@@ -37,7 +37,7 @@ abstract class ExtendedQuizCatalog {
     QuizDefinition(
       id: 'quiz_geostatistique',
       title: 'Géostatistique',
-      subtitle: '10 questions • Variogramme et validation',
+      subtitle: '20 questions • Variogramme et validation',
       accentValue: 0xFFB40B4C,
       iconName: 'analytics',
       courseId: 'geostatistique',
@@ -45,7 +45,7 @@ abstract class ExtendedQuizCatalog {
     QuizDefinition(
       id: 'quiz_mnt',
       title: 'MNT et hydrologie',
-      subtitle: '10 questions • Relief et bassins',
+      subtitle: '20 questions • Relief et bassins',
       accentValue: 0xFF5A0B68,
       iconName: 'terrain',
       courseId: 'mnt_hydrologie',
@@ -53,7 +53,7 @@ abstract class ExtendedQuizCatalog {
     QuizDefinition(
       id: 'quiz_cadastre',
       title: 'Cadastre et foncier',
-      subtitle: '10 questions • Parcelles et topologie',
+      subtitle: '20 questions • Parcelles et topologie',
       accentValue: 0xFF7E063F,
       iconName: 'cadastre',
       courseId: 'cadastre_foncier',
@@ -61,7 +61,7 @@ abstract class ExtendedQuizCatalog {
     QuizDefinition(
       id: 'quiz_python',
       title: 'Python géomatique',
-      subtitle: '10 questions • Automatisation fiable',
+      subtitle: '20 questions • Automatisation fiable',
       accentValue: 0xFFEC1745,
       iconName: 'code',
       courseId: 'python_geomatique',
@@ -69,7 +69,7 @@ abstract class ExtendedQuizCatalog {
     QuizDefinition(
       id: 'quiz_collecte',
       title: 'Collecte mobile et qualité',
-      subtitle: '10 questions • Formulaires et terrain',
+      subtitle: '20 questions • Formulaires et terrain',
       accentValue: 0xFFFF6338,
       iconName: 'mobile',
       courseId: 'collecte_qualite',
@@ -77,7 +77,7 @@ abstract class ExtendedQuizCatalog {
     QuizDefinition(
       id: 'quiz_risques',
       title: 'Environnement et risques',
-      subtitle: '10 questions • Aléas et décision',
+      subtitle: '20 questions • Aléas et décision',
       accentValue: 0xFF168A65,
       iconName: 'environment',
       courseId: 'environnement_risques',

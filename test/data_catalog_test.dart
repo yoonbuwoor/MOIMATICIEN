@@ -6,24 +6,25 @@ import 'package:moi_geomaticien/data/certification_catalog.dart';
 import 'package:moi_geomaticien/data/quiz_catalog.dart';
 
 void main() {
-  test('le catalogue contient seize cours complets', () {
-    expect(CourseCatalog.courses, hasLength(16));
+  test('le catalogue contient trente-quatre cours complets', () {
+    expect(CourseCatalog.courses, hasLength(34));
     expect(
       CourseCatalog.courses.map((course) => course.id).toSet(),
-      hasLength(16),
+      hasLength(34),
     );
     for (final course in CourseCatalog.courses) {
       expect(course.objectives.length, greaterThanOrEqualTo(3));
       expect(course.sections.length, greaterThanOrEqualTo(4));
       expect(course.imageAsset, isNotEmpty);
+      expect(course.readingMinutes, inInclusiveRange(2, 20));
     }
   });
 
-  test('les 160 questions sont valides et uniques', () {
-    expect(QuizCatalog.questions, hasLength(160));
+  test('les 680 questions sont valides et uniques', () {
+    expect(QuizCatalog.questions, hasLength(680));
     expect(
       QuizCatalog.questions.map((question) => question.id).toSet(),
-      hasLength(160),
+      hasLength(680),
     );
     for (final question in QuizCatalog.questions) {
       expect(question.options.length, greaterThanOrEqualTo(2));
@@ -35,11 +36,21 @@ void main() {
     }
   });
 
-  test('chaque quiz thématique contient dix questions', () {
+  test('chaque quiz thématique contient vingt questions', () {
     for (final definition in QuizCatalog.definitions.where(
       (quiz) => quiz.courseId != null,
     )) {
-      expect(QuizCatalog.questionsFor(definition), hasLength(10));
+      expect(QuizCatalog.questionsFor(definition), hasLength(20));
+    }
+  });
+
+  test('les options de chaque question sont distinctes', () {
+    for (final question in QuizCatalog.questions) {
+      expect(
+        question.options.toSet(),
+        hasLength(question.options.length),
+        reason: question.id,
+      );
     }
   });
 
@@ -58,13 +69,22 @@ void main() {
     }
   });
 
-  test('le module drone est enrichi en huit parties', () {
+  test('le module drone reste une introduction compacte', () {
     final droneCourse = CourseCatalog.byId('photogrammetrie_drone');
-    expect(droneCourse.sections, hasLength(8));
+    expect(droneCourse.sections, hasLength(4));
+    expect(droneCourse.readingMinutes, lessThanOrEqualTo(6));
     expect(
       droneCourse.sections.last.fieldNote,
       contains('Drone Atlas Academy'),
     );
+  });
+
+  test('les temps de lecture sont calculés et restent réalistes', () {
+    final estimates = CourseCatalog.courses
+        .map((course) => course.readingMinutes)
+        .toList(growable: false);
+    expect(estimates.reduce((a, b) => a < b ? a : b), greaterThanOrEqualTo(3));
+    expect(estimates.reduce((a, b) => a > b ? a : b), lessThanOrEqualTo(6));
   });
 
   test('la page de confidentialité séparée est prête à publier', () {
@@ -77,8 +97,8 @@ void main() {
     expect(html, isNot(contains('novateur221@gmail.com')));
   });
 
-  test('le défi final contient vingt questions', () {
+  test('le défi final contient deux questions par cours', () {
     final challenge = QuizCatalog.definitions.last;
-    expect(QuizCatalog.questionsFor(challenge), hasLength(20));
+    expect(QuizCatalog.questionsFor(challenge), hasLength(68));
   });
 }
