@@ -116,17 +116,18 @@ void main() {
     SharedPreferences.setMockInitialValues(<String, Object>{});
     final controller = await AppController.create();
 
-    final quickReward = await controller.recordQuickChallenge();
-    final timedReward = await controller.recordTimedChallenge();
+    final int quickReward = await controller.recordQuickChallenge(
+      correct: 1,
+      total: 2,
+    );
+    final int timedReward = await controller.recordTimedChallenge(
+      correct: 1,
+      total: 2,
+      completed: true,
+    );
 
-    expect(
-      quickReward.completedMissionTitles,
-      contains('Échauffement express'),
-    );
-    expect(
-      timedReward.completedMissionTitles,
-      contains('Plus vite que le GPS'),
-    );
+    expect(quickReward, greaterThan(0));
+    expect(timedReward, greaterThan(0));
     expect(controller.completedDailyMissionCount, 2);
   });
 }

@@ -1,11 +1,11 @@
-# Validation de la version 1.4.1+6
+# Validation de la version 1.4.2+7
 
 Contrôles effectués dans l’espace de travail :
 
 - `flutter pub get` avec Flutter 3.44.9 et Dart 3.12.2 : réussi ;
 - `flutter analyze --no-fatal-infos --no-fatal-warnings` : aucun problème ;
 - `flutter test` : 22 tests sur 22 réussis ;
-- méthodes de compatibilité `recordQuickChallenge` et `recordTimedChallenge` validées ;
+- `recordQuickChallenge` et `recordTimedChallenge` acceptent les paramètres attendus et renvoient un total d'XP de type `int` ;
 - 10 vies renouvelées chaque jour et 2 vies réellement ajoutées par leçon terminée ;
 - modes aléatoires de 5 et 10 questions, sprint de 10 questions avec 15 secondes par question ;
 - trois missions quotidiennes, récompenses XP et animation de victoire ;

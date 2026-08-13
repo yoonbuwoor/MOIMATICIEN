@@ -301,24 +301,57 @@ class AppController extends ChangeNotifier {
     await _preferences.setInt(_livesKey, _lives);
   }
 
-  /// Compatibilité avec l'écran de défi rapide des premières versions 1.4.
-  Future<GameSessionReward> recordQuickChallenge() {
-    return recordGameSession(
+  /// Enregistre un défi rapide et renvoie le total d'XP gagné.
+  Future<int> recordQuickChallenge({
+    required int correct,
+    required int total,
+    bool completed = true,
+  }) {
+    return _recordChallenge(
+      quizId: 'quick_$total',
       mode: QuizPlayMode.quick,
-      correct: 0,
-      total: 1,
-      completed: true,
+      correct: correct,
+      total: total,
+      completed: completed,
     );
   }
 
-  /// Compatibilité avec l'écran de défi chronométré des premières versions 1.4.
-  Future<GameSessionReward> recordTimedChallenge() {
-    return recordGameSession(
+  /// Enregistre un défi chronométré et renvoie le total d'XP gagné.
+  Future<int> recordTimedChallenge({
+    required int correct,
+    required int total,
+    required bool completed,
+  }) {
+    return _recordChallenge(
+      quizId: 'timed_$total',
       mode: QuizPlayMode.timed,
-      correct: 0,
-      total: 1,
-      completed: true,
+      correct: correct,
+      total: total,
+      completed: completed,
     );
+  }
+
+  Future<int> _recordChallenge({
+    required String quizId,
+    required QuizPlayMode mode,
+    required int correct,
+    required int total,
+    required bool completed,
+  }) async {
+    if (total <= 0) return 0;
+    final safeCorrect = correct.clamp(0, total).toInt();
+    final quizXp = await saveQuizScore(
+      quizId: quizId,
+      correct: safeCorrect,
+      total: total,
+    );
+    final sessionReward = await recordGameSession(
+      mode: mode,
+      correct: safeCorrect,
+      total: total,
+      completed: completed,
+    );
+    return quizXp + sessionReward.bonusXp;
   }
 
   Future<GameSessionReward> recordGameSession({
