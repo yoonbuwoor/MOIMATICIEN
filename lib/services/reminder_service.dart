@@ -40,7 +40,6 @@ void learningReminderCallbackDispatcher() {
 class ReminderService {
   static Future<void> initialize() async {
     await Workmanager().initialize(learningReminderCallbackDispatcher);
-    final preferences = SharedPreferencesAsync();
     await refreshSchedule();
   }
 

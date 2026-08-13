@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:moi_geomaticien/models/learning_models.dart';
 import 'package:moi_geomaticien/state/app_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -15,6 +16,7 @@ void main() {
     expect(firstReward, 120);
     expect(duplicateReward, 0);
     expect(controller.xp, 120);
+    expect(controller.lives, 12);
     expect(controller.streakDays, 1);
     expect(controller.isCourseCompleted('cartographie'), isTrue);
   });
@@ -51,20 +53,62 @@ void main() {
 
     expect(controller.streakDays, 0);
   });
-}
 
-
-  test('les modes rapides, vies et missions quotidiennes fonctionnent', () async {
+  test('les vies diminuent sans jamais passer sous zéro', () async {
     SharedPreferences.setMockInitialValues(<String, Object>{});
     final controller = await AppController.create();
-    expect(controller.lives, 3);
-    final reward = await controller.recordQuickChallenge(correct: 5, total: 5);
-    expect(reward, greaterThan(0));
-    expect(controller.dailyQuick, 1);
-    expect(controller.dailyCorrect, 5);
-    expect(controller.dailyMissionCompletedCount, greaterThanOrEqualTo(2));
-    await controller.loseLife();
-    expect(controller.lives, 2);
-    await controller.addLife();
-    expect(controller.lives, 3);
+
+    for (var index = 0; index < AppController.dailyLives + 2; index++) {
+      await controller.loseLife();
+    }
+
+    expect(controller.lives, 0);
+    expect(controller.canStartGame, isFalse);
   });
+
+  test('un quiz rapide parfait valide les missions et rend un cœur', () async {
+    SharedPreferences.setMockInitialValues(<String, Object>{});
+    final controller = await AppController.create();
+    await controller.loseLife();
+
+    final reward = await controller.recordGameSession(
+      mode: QuizPlayMode.quick,
+      correct: 5,
+      total: 5,
+      completed: true,
+    );
+
+    expect(reward.bonusXp, 45);
+    expect(reward.completedMissionTitles, hasLength(2));
+    expect(reward.lifeRestored, isTrue);
+    expect(controller.lives, AppController.dailyLives);
+    expect(controller.completedDailyMissionCount, 2);
+  });
+
+  test('les cœurs et les missions reviennent au nouveau jour', () async {
+    SharedPreferences.setMockInitialValues(<String, Object>{
+      'game.dailyDate': '2000-01-01',
+      'game.dailyQuickCompleted': true,
+      'game.dailyCorrectAnswers': 99,
+      'game.dailyTimedCompleted': true,
+      'game.lives': 0,
+    });
+
+    final controller = await AppController.create();
+
+    expect(controller.lives, AppController.dailyLives);
+    expect(controller.completedDailyMissionCount, 0);
+  });
+
+  test('terminer une leçon ajoute réellement deux vies', () async {
+    SharedPreferences.setMockInitialValues(<String, Object>{});
+    final controller = await AppController.create();
+    await controller.loseLife();
+    await controller.loseLife();
+    await controller.loseLife();
+
+    await controller.markCourseCompleted('cartographie');
+
+    expect(controller.lives, 9);
+  });
+}

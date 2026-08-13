@@ -11,7 +11,6 @@ class ProgressScreen extends StatelessWidget {
 
   final AppController controller;
 
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -80,10 +79,26 @@ class ProgressScreen extends StatelessWidget {
               const SizedBox(height: 28),
               Card(
                 child: ListTile(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
-                  leading: const CircleAvatar(backgroundColor: AppColors.softRose, foregroundColor: AppColors.burgundy, child: Icon(Icons.notifications_active_rounded)),
-                  title: const Text('Rappels automatiques • 12 h', style: TextStyle(fontWeight: FontWeight.w800)),
-                  subtitle: const Text('Aucun bouton de désactivation dans l’application. Android peut toutefois bloquer les notifications depuis ses réglages système.'),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 10,
+                  ),
+                  leading: const CircleAvatar(
+                    backgroundColor: AppColors.softRose,
+                    foregroundColor: AppColors.burgundy,
+                    child: Icon(Icons.notifications_active_rounded),
+                  ),
+                  title: const Text(
+                    'Rappel automatique toutes les 12 h',
+                    style: TextStyle(fontWeight: FontWeight.w800),
+                  ),
+                  subtitle: const Text(
+                    'Toujours programmé dans l’application. Le téléphone conserve le contrôle de l’autorisation système.',
+                  ),
+                  trailing: const Icon(
+                    Icons.lock_clock_rounded,
+                    color: AppColors.burgundy,
+                  ),
                 ),
               ),
               const SizedBox(height: 14),

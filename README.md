@@ -2,15 +2,17 @@
 
 Application Flutter d’apprentissage de la géomatique créée par **Novateur221**.
 
-## Version enrichie 1.3
+## Version ludique 1.4
 
 - 34 cours illustrés disponibles hors ligne ;
 - 680 questions réparties en 34 quiz thématiques de 20 questions ;
 - un défi transversal de 68 questions, soit deux questions par cours ;
 - correction et explication après chaque réponse ;
 - progression des cours et meilleurs scores enregistrés localement ;
-- XP, niveaux, séries quotidiennes, combos et 10 badges à débloquer ;
-- rappels locaux activables toutes les 12 heures ;
+- modes aléatoires de 5 ou 10 questions et sprint chronométré de 10 questions ;
+- missions quotidiennes, XP, niveaux, séries, combos, récompenses et animation de victoire ;
+- 10 vies offertes chaque jour (les 10 lettres de « géomatique ») et 2 vies gagnées par leçon terminée ;
+- rappels locaux automatiquement programmés toutes les 12 heures ;
 - interface mobile claire, responsive et sans compte utilisateur ;
 - espace **Certifications** avec 12 parcours adaptés à différents secteurs ;
 - demandes sur mesure par WhatsApp ou e-mail, coordonnées masquées dans l’interface ;
@@ -86,7 +88,7 @@ Le workflow `.github/workflows/main.yml` compile automatiquement **l’APK et l�
 
 - Nom public : `Moi Géomaticien`
 - Package : `com.novateur221.moi_geomaticien`
-- Version : `1.3.0+4`
+- Version : `1.4.0+5`
 - Android minimum : `7.0 (API 24)`
 
 ## Modifier les contenus
@@ -106,8 +108,4 @@ Le bouton visible **Politique de confidentialité** ouvre la page publique sans 
 
 ## Rappels d’apprentissage
 
-Au premier lancement, l’application propose d’activer les notifications. Après l’autorisation Android, un travail périodique local prépare un rappel environ toutes les 12 heures. Android peut décaler légèrement son exécution selon l’économie de batterie. L’option reste modifiable depuis l’onglet **Progression**.
-
-
-## Version 1.4.0 — mode ludique
-Mode rapide 5/10 questions, sprint 20 secondes, missions quotidiennes, 3 vies, bonus XP, animations et messages humoristiques. Les rappels 12 h sont programmés automatiquement ; Android conserve le contrôle final de l’autorisation système.
+Au premier lancement, l’application explique le rappel automatique puis demande l’autorisation système. Un travail périodique local prépare ensuite un rappel environ toutes les 12 heures. Android peut décaler son exécution selon l’économie de batterie et l’utilisateur garde toujours le contrôle de l’autorisation dans les réglages du téléphone. Aucun bouton de désactivation n’est proposé dans l’application.

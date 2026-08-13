@@ -110,3 +110,10 @@ class QuizDefinition {
   final String iconName;
   final String? courseId;
 }
+
+enum QuizPlayMode { standard, quick, timed }
+
+extension QuizPlayModeRules on QuizPlayMode {
+  bool get usesLives => this != QuizPlayMode.standard;
+  bool get isTimed => this == QuizPlayMode.timed;
+}

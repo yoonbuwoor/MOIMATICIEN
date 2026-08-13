@@ -1,8 +1,3 @@
-## 1.4.0
-- Modes rapides 5/10 questions et sprint chronométré.
-- Missions quotidiennes, vies, récompenses et animations de victoire.
-- Rappels 12 h sans interrupteur dans l’interface.
-
 # Changelog
 
 ## 1.3.0+4

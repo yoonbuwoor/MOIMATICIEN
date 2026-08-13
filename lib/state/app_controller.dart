@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data/course_catalog.dart';
-import '../services/reminder_preferences.dart';
+import '../models/learning_models.dart';
 
 class LearningBadge {
   const LearningBadge({
@@ -24,6 +24,44 @@ class LearningBadge {
   final bool unlocked;
 }
 
+class DailyMission {
+  const DailyMission({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.progress,
+    required this.target,
+    required this.rewardXp,
+  });
+
+  final String id;
+  final String title;
+  final String description;
+  final int progress;
+  final int target;
+  final int rewardXp;
+
+  bool get completed => progress >= target;
+}
+
+class GameSessionReward {
+  const GameSessionReward({
+    required this.bonusXp,
+    required this.completedMissionTitles,
+    required this.lifeRestored,
+  });
+
+  static const empty = GameSessionReward(
+    bonusXp: 0,
+    completedMissionTitles: <String>[],
+    lifeRestored: false,
+  );
+
+  final int bonusXp;
+  final List<String> completedMissionTitles;
+  final bool lifeRestored;
+}
+
 class AppController extends ChangeNotifier {
   AppController._(this._preferences);
 
@@ -33,10 +71,12 @@ class AppController extends ChangeNotifier {
   static const _streakKey = 'gamification.streak';
   static const _lastActivityKey = 'gamification.lastActivityDate';
   static const _notificationPromptSeenKey = 'notifications.promptSeen';
-  static const _livesKey = 'gamification.lives';
-  static const _livesDateKey = 'gamification.livesDate';
-  static const _dailyKey = 'gamification.daily';
-  static const _dailyDateKey = 'gamification.dailyDate';
+  static const _dailyDateKey = 'game.dailyDate';
+  static const _dailyQuickKey = 'game.dailyQuickCompleted';
+  static const _dailyCorrectKey = 'game.dailyCorrectAnswers';
+  static const _dailyTimedKey = 'game.dailyTimedCompleted';
+  static const _livesKey = 'game.lives';
+  static const dailyLives = 10;
 
   final SharedPreferences _preferences;
   final Set<String> _completedCourseIds = <String>{};
@@ -45,20 +85,19 @@ class AppController extends ChangeNotifier {
   int _xp = 0;
   int _streakDays = 0;
   DateTime? _lastActivityDate;
-  bool _notificationsEnabled = false;
+  bool _notificationsEnabled = true;
   bool _notificationPromptSeen = false;
-  int _lives = 3;
-  DateTime? _livesDate;
-  int _dailyQuick = 0;
-  int _dailyCorrect = 0;
-  int _dailyTimed = 0;
-  int _dailyXp = 0;
-  DateTime? _dailyDate;
+  String _dailyDate = '';
+  bool _dailyQuickCompleted = false;
+  int _dailyCorrectAnswers = 0;
+  bool _dailyTimedCompleted = false;
+  int _lives = dailyLives;
 
   static Future<AppController> create() async {
     final preferences = await SharedPreferences.getInstance();
     final controller = AppController._(preferences);
     controller._restore();
+    await controller._ensureDailyState();
     return controller;
   }
 
@@ -74,11 +113,37 @@ class AppController extends ChangeNotifier {
   bool get notificationsEnabled => _notificationsEnabled;
   bool get notificationPromptSeen => _notificationPromptSeen;
   int get lives => _lives;
-  int get dailyQuick => _dailyQuick;
-  int get dailyCorrect => _dailyCorrect;
-  int get dailyTimed => _dailyTimed;
-  int get dailyXp => _dailyXp;
-  int get dailyMissionCompletedCount => (dailyQuick >= 1 ? 1 : 0) + (dailyCorrect >= 5 ? 1 : 0) + (dailyTimed >= 1 ? 1 : 0);
+  bool get canStartGame => _lives > 0;
+
+  List<DailyMission> get dailyMissions => <DailyMission>[
+    DailyMission(
+      id: 'quick',
+      title: 'Échauffement express',
+      description: 'Terminer un quiz rapide de 5 ou 10 questions.',
+      progress: _dailyQuickCompleted ? 1 : 0,
+      target: 1,
+      rewardXp: 20,
+    ),
+    DailyMission(
+      id: 'correct',
+      title: 'Œil de lynx',
+      description: 'Trouver 5 bonnes réponses aujourd’hui.',
+      progress: _dailyCorrectAnswers.clamp(0, 5).toInt(),
+      target: 5,
+      rewardXp: 25,
+    ),
+    DailyMission(
+      id: 'timed',
+      title: 'Plus vite que le GPS',
+      description: 'Terminer un mini-défi chronométré.',
+      progress: _dailyTimedCompleted ? 1 : 0,
+      target: 1,
+      rewardXp: 30,
+    ),
+  ];
+
+  int get completedDailyMissionCount =>
+      dailyMissions.where((mission) => mission.completed).length;
 
   bool isCourseCompleted(String courseId) =>
       _completedCourseIds.contains(courseId);
@@ -179,6 +244,7 @@ class AppController extends ChangeNotifier {
     if (!_completedCourseIds.add(courseId)) return 0;
     const reward = 120;
     _xp += reward;
+    _lives += 2;
     _touchActivity();
     await Future.wait([
       _preferences.setStringList(
@@ -186,6 +252,7 @@ class AppController extends ChangeNotifier {
         _completedCourseIds.toList(growable: false),
       ),
       _persistGamification(),
+      _persistDailyGame(),
     ]);
     notifyListeners();
     return reward;
@@ -208,7 +275,6 @@ class AppController extends ChangeNotifier {
     }
     _xp += reward;
     _touchActivity();
-    if (percentage == 100) await addLife();
     await Future.wait([
       _preferences.setString(_quizScoresKey, jsonEncode(_bestQuizPercentages)),
       _persistGamification(),
@@ -217,49 +283,65 @@ class AppController extends ChangeNotifier {
     return reward;
   }
 
-  Future<int> recordQuickChallenge({required int correct, required int total}) async {
-    _refreshDailyState();
-    final reward = 20 + (correct * 8) + (correct == total ? 30 : 0);
-    _xp += reward; _dailyQuick++; _dailyCorrect += correct; _dailyXp += reward; _touchActivity();
-    if (correct < (total / 2).ceil()) await loseLife();
-    await _persistDailyGamification(); await _persistGamification(); notifyListeners(); return reward;
-  }
-
-  Future<int> recordTimedChallenge({required int correct, required int total, required bool completed}) async {
-    _refreshDailyState();
-    final reward = 30 + (correct * 10) + (completed ? 25 : 0);
-    _xp += reward; _dailyTimed++; _dailyCorrect += correct; _dailyXp += reward; _touchActivity();
-    await _persistDailyGamification(); await _persistGamification(); notifyListeners(); return reward;
-  }
-
-  Future<void> loseLife() async { _refreshDailyState(); if (_lives <= 0) return; _lives--; await _preferences.setInt(_livesKey, _lives); notifyListeners(); }
-  Future<void> addLife() async { _refreshDailyState(); if (_lives >= 3) return; _lives++; await _preferences.setInt(_livesKey, _lives); notifyListeners(); }
-  Future<void> claimDailyBonus() async { _refreshDailyState(); if (_dailyXp >= 150) return; _dailyXp = 150; _xp += 50; await _persistDailyGamification(); await _persistGamification(); notifyListeners(); }
-
-  void _refreshDailyState() {
-    final now = DateTime.now(); final today = DateTime(now.year, now.month, now.day);
-    if (_dailyDate == null || !_sameDay(_dailyDate!, today)) { _dailyDate = today; _dailyQuick = 0; _dailyCorrect = 0; _dailyTimed = 0; _dailyXp = 0; }
-    if (_livesDate == null || !_sameDay(_livesDate!, today)) { _livesDate = today; _lives = 3; _preferences.setInt(_livesKey, _lives); _preferences.setString(_livesDateKey, today.toIso8601String()); }
-  }
-  bool _sameDay(DateTime a, DateTime b) => a.year == b.year && a.month == b.month && a.day == b.day;
-  Future<bool> _persistDailyGamification() async {
-    final results = await Future.wait([
-      _preferences.setInt(_livesKey, _lives), _preferences.setString(_livesDateKey, _livesDate?.toIso8601String() ?? ''),
-      _preferences.setString(_dailyKey, jsonEncode({'quick': _dailyQuick, 'correct': _dailyCorrect, 'timed': _dailyTimed, 'xp': _dailyXp})),
-      _preferences.setString(_dailyDateKey, _dailyDate?.toIso8601String() ?? ''),
-    ]); return results.every((saved) => saved);
-  }
-
   Future<void> setNotificationPromptSeen() async {
     _notificationPromptSeen = true;
     await _preferences.setBool(_notificationPromptSeenKey, true);
     notifyListeners();
   }
 
-  Future<void> setNotificationsEnabled(bool enabled) async {
-    _notificationsEnabled = enabled;
-    await _preferences.setBool(notificationsEnabledKey, enabled);
+  Future<void> confirmAutomaticReminders() async {
+    _notificationsEnabled = true;
     notifyListeners();
+  }
+
+  Future<void> loseLife() async {
+    if (_lives <= 0) return;
+    _lives--;
+    notifyListeners();
+    await _preferences.setInt(_livesKey, _lives);
+  }
+
+  Future<GameSessionReward> recordGameSession({
+    required QuizPlayMode mode,
+    required int correct,
+    required int total,
+    required bool completed,
+  }) async {
+    if (total <= 0) return GameSessionReward.empty;
+
+    final completedBefore = <String, bool>{
+      for (final mission in dailyMissions) mission.id: mission.completed,
+    };
+    if (completed && mode == QuizPlayMode.quick) _dailyQuickCompleted = true;
+    if (completed && mode == QuizPlayMode.timed) _dailyTimedCompleted = true;
+    _dailyCorrectAnswers += correct;
+
+    final newlyCompleted = dailyMissions
+        .where(
+          (mission) =>
+              mission.completed && !(completedBefore[mission.id] ?? false),
+        )
+        .toList(growable: false);
+    final bonusXp = newlyCompleted.fold<int>(
+      0,
+      (sum, mission) => sum + mission.rewardXp,
+    );
+    var lifeRestored = false;
+    if (mode.usesLives && correct == total && _lives < dailyLives) {
+      _lives++;
+      lifeRestored = true;
+    }
+    _xp += bonusXp;
+    _touchActivity();
+    await Future.wait([_persistDailyGame(), _persistGamification()]);
+    notifyListeners();
+    return GameSessionReward(
+      bonusXp: bonusXp,
+      completedMissionTitles: newlyCompleted
+          .map((mission) => mission.title)
+          .toList(growable: false),
+      lifeRestored: lifeRestored,
+    );
   }
 
   void _touchActivity() {
@@ -288,6 +370,35 @@ class AppController extends ChangeNotifier {
         _lastActivityKey,
         _lastActivityDate?.toIso8601String() ?? '',
       ),
+    ]);
+    return results.every((saved) => saved);
+  }
+
+  String _todayKey() {
+    final now = DateTime.now();
+    return '${now.year.toString().padLeft(4, '0')}-'
+        '${now.month.toString().padLeft(2, '0')}-'
+        '${now.day.toString().padLeft(2, '0')}';
+  }
+
+  Future<void> _ensureDailyState() async {
+    final today = _todayKey();
+    if (_dailyDate == today) return;
+    _dailyDate = today;
+    _dailyQuickCompleted = false;
+    _dailyCorrectAnswers = 0;
+    _dailyTimedCompleted = false;
+    _lives = dailyLives;
+    await _persistDailyGame();
+  }
+
+  Future<bool> _persistDailyGame() async {
+    final results = await Future.wait([
+      _preferences.setString(_dailyDateKey, _dailyDate),
+      _preferences.setBool(_dailyQuickKey, _dailyQuickCompleted),
+      _preferences.setInt(_dailyCorrectKey, _dailyCorrectAnswers),
+      _preferences.setBool(_dailyTimedKey, _dailyTimedCompleted),
+      _preferences.setInt(_livesKey, _lives),
     ]);
     return results.every((saved) => saved);
   }
@@ -330,22 +441,15 @@ class AppController extends ChangeNotifier {
       );
       if (today.difference(activityDay).inDays > 1) _streakDays = 0;
     }
-    _notificationsEnabled =
-        _preferences.getBool(notificationsEnabledKey) ?? false;
-    _notificationPromptSeen = _preferences.getBool(_notificationPromptSeenKey) ?? false;
-    _lives = _preferences.getInt(_livesKey) ?? 3;
-    _livesDate = DateTime.tryParse(_preferences.getString(_livesDateKey) ?? '');
-    _dailyDate = DateTime.tryParse(_preferences.getString(_dailyDateKey) ?? '');
-    final rawDaily = _preferences.getString(_dailyKey);
-    if (rawDaily != null && rawDaily.isNotEmpty) {
-      try {
-        final decoded = jsonDecode(rawDaily) as Map<String, dynamic>;
-        _dailyQuick = (decoded['quick'] as num?)?.toInt() ?? 0;
-        _dailyCorrect = (decoded['correct'] as num?)?.toInt() ?? 0;
-        _dailyTimed = (decoded['timed'] as num?)?.toInt() ?? 0;
-        _dailyXp = (decoded['xp'] as num?)?.toInt() ?? 0;
-      } on Object {}
-    }
-    _refreshDailyState();
+    _notificationsEnabled = true;
+    _notificationPromptSeen =
+        _preferences.getBool(_notificationPromptSeenKey) ?? false;
+    _dailyDate = _preferences.getString(_dailyDateKey) ?? '';
+    _dailyQuickCompleted = _preferences.getBool(_dailyQuickKey) ?? false;
+    _dailyCorrectAnswers = _preferences.getInt(_dailyCorrectKey) ?? 0;
+    _dailyTimedCompleted = _preferences.getBool(_dailyTimedKey) ?? false;
+    _lives = (_preferences.getInt(_livesKey) ?? dailyLives)
+        .clamp(0, 999)
+        .toInt();
   }
 }

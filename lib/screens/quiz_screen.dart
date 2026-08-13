@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../data/quiz_catalog.dart';
@@ -10,11 +12,17 @@ class QuizScreen extends StatefulWidget {
   const QuizScreen({
     required this.definition,
     required this.controller,
+    this.sessionQuestions,
+    this.playMode = QuizPlayMode.standard,
+    this.secondsPerQuestion = 0,
     super.key,
   });
 
   final QuizDefinition definition;
   final AppController controller;
+  final List<QuizQuestion>? sessionQuestions;
+  final QuizPlayMode playMode;
+  final int secondsPerQuestion;
 
   @override
   State<QuizScreen> createState() => _QuizScreenState();
@@ -27,22 +35,61 @@ class _QuizScreenState extends State<QuizScreen> {
   int _combo = 0;
   int _bestCombo = 0;
   int? _selectedIndex;
+  bool _answered = false;
+  bool _timedOut = false;
+  bool _endedByLives = false;
+  Timer? _timer;
+  int _secondsLeft = 0;
 
   QuizQuestion get _question => _questions[_currentIndex];
-  bool get _answered => _selectedIndex != null;
   bool get _isLast => _currentIndex == _questions.length - 1;
+  bool get _sessionFinished => _isLast || _endedByLives;
 
   @override
   void initState() {
     super.initState();
-    _questions = QuizCatalog.questionsFor(widget.definition);
+    _questions =
+        widget.sessionQuestions ?? QuizCatalog.questionsFor(widget.definition);
+    _startTimer();
   }
 
-  void _selectAnswer(int index) {
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void _startTimer() {
+    _timer?.cancel();
+    if (!widget.playMode.isTimed || widget.secondsPerQuestion <= 0) return;
+    _secondsLeft = widget.secondsPerQuestion;
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted || _answered) {
+        timer.cancel();
+        return;
+      }
+      if (_secondsLeft <= 1) {
+        timer.cancel();
+        _answer(null, timedOut: true);
+        return;
+      }
+      setState(() => _secondsLeft--);
+    });
+  }
+
+  void _selectAnswer(int index) => _answer(index);
+
+  void _answer(int? index, {bool timedOut = false}) {
     if (_answered) return;
+    _timer?.cancel();
     final correct = index == _question.correctIndex;
+    if (!correct && widget.playMode.usesLives) {
+      unawaited(widget.controller.loseLife());
+    }
     setState(() {
+      _answered = true;
       _selectedIndex = index;
+      _timedOut = timedOut;
       if (correct) {
         _score++;
         _combo++;
@@ -50,17 +97,24 @@ class _QuizScreenState extends State<QuizScreen> {
       } else {
         _combo = 0;
       }
+      _endedByLives =
+          widget.playMode.usesLives && !widget.controller.canStartGame;
     });
-    if (!correct) widget.controller.loseLife();
   }
 
   Future<void> _continue() async {
     if (!_answered) return;
-    if (_isLast) {
-      final earnedXp = await widget.controller.saveQuizScore(
+    if (_sessionFinished) {
+      final quizXp = await widget.controller.saveQuizScore(
         quizId: widget.definition.id,
         correct: _score,
         total: _questions.length,
+      );
+      final gameReward = await widget.controller.recordGameSession(
+        mode: widget.playMode,
+        correct: _score,
+        total: _questions.length,
+        completed: _isLast,
       );
       if (!mounted) return;
       await Navigator.of(context).pushReplacement<void, void>(
@@ -70,8 +124,12 @@ class _QuizScreenState extends State<QuizScreen> {
             controller: widget.controller,
             score: _score,
             total: _questions.length,
-            earnedXp: earnedXp,
+            earnedXp: quizXp + gameReward.bonusXp,
             bestCombo: _bestCombo,
+            gameReward: gameReward,
+            sessionQuestions: _questions,
+            playMode: widget.playMode,
+            secondsPerQuestion: widget.secondsPerQuestion,
           ),
         ),
       );
@@ -80,7 +138,10 @@ class _QuizScreenState extends State<QuizScreen> {
     setState(() {
       _currentIndex++;
       _selectedIndex = null;
+      _answered = false;
+      _timedOut = false;
     });
+    _startTimer();
   }
 
   @override
@@ -99,43 +160,34 @@ class _QuizScreenState extends State<QuizScreen> {
           physics: const BouncingScrollPhysics(),
           padding: const EdgeInsets.fromLTRB(20, 8, 20, 120),
           children: [
-            Row(
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
               children: [
-                Text(
-                  'Question ${_currentIndex + 1} sur ${_questions.length}',
-                  style: const TextStyle(
-                    color: AppColors.burgundy,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w800,
-                  ),
+                _StatusPill(
+                  icon: Icons.help_rounded,
+                  label:
+                      '${_currentIndex + 1}/${_questions.length} • $_score point${_score > 1 ? 's' : ''}',
+                  color: AppColors.burgundy,
                 ),
-                if (_combo >= 2) ...[
-                  const SizedBox(width: 10),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.coral.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(999),
-                    ),
-                    child: Text(
-                      '🔥 Combo x$_combo',
-                      style: const TextStyle(
-                        color: AppColors.coral,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
+                if (widget.playMode.isTimed)
+                  _StatusPill(
+                    icon: Icons.timer_rounded,
+                    label: '$_secondsLeft s',
+                    color: _secondsLeft <= 5 ? AppColors.red : AppColors.coral,
                   ),
-                ],
-                Row(children: List.generate(3, (i) => Icon(i < widget.controller.lives ? Icons.favorite_rounded : Icons.favorite_border_rounded, color: AppColors.coral, size: 17))),
-                const SizedBox(width: 8),
-                Text(
-                  '$_score bonne${_score > 1 ? 's' : ''} réponse${_score > 1 ? 's' : ''}',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
+                if (widget.playMode.usesLives)
+                  _StatusPill(
+                    icon: Icons.favorite_rounded,
+                    label: '${widget.controller.lives} cœur(s)',
+                    color: AppColors.red,
+                  ),
+                if (_combo >= 2)
+                  _StatusPill(
+                    icon: Icons.local_fire_department_rounded,
+                    label: 'Combo x$_combo',
+                    color: AppColors.coral,
+                  ),
               ],
             ),
             const SizedBox(height: 10),
@@ -202,6 +254,9 @@ class _QuizScreenState extends State<QuizScreen> {
                 correct: _selectedIndex == _question.correctIndex,
                 explanation: _question.explanation,
                 combo: _combo,
+                timedOut: _timedOut,
+                noLivesLeft: _endedByLives,
+                lifeMode: widget.playMode.usesLives,
               ),
             ],
           ],
@@ -212,10 +267,50 @@ class _QuizScreenState extends State<QuizScreen> {
         child: FilledButton.icon(
           onPressed: _answered ? _continue : null,
           icon: Icon(
-            _isLast ? Icons.flag_rounded : Icons.arrow_forward_rounded,
+            _sessionFinished ? Icons.flag_rounded : Icons.arrow_forward_rounded,
           ),
-          label: Text(_isLast ? 'Voir mon résultat' : 'Question suivante'),
+          label: Text(
+            _sessionFinished ? 'Voir mon résultat' : 'Question suivante',
+          ),
         ),
+      ),
+    );
+  }
+}
+
+class _StatusPill extends StatelessWidget {
+  const _StatusPill({
+    required this.icon,
+    required this.label,
+    required this.color,
+  });
+
+  final IconData icon;
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: color, size: 16),
+          const SizedBox(width: 5),
+          Text(
+            label,
+            style: TextStyle(
+              color: color,
+              fontSize: 12,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -320,11 +415,17 @@ class _ExplanationCard extends StatelessWidget {
     required this.correct,
     required this.explanation,
     required this.combo,
+    required this.timedOut,
+    required this.noLivesLeft,
+    required this.lifeMode,
   });
 
   final bool correct;
   final String explanation;
   final int combo;
+  final bool timedOut;
+  final bool noLivesLeft;
+  final bool lifeMode;
 
   @override
   Widget build(BuildContext context) {
@@ -353,6 +454,12 @@ class _ExplanationCard extends StatelessWidget {
                       ? combo >= 3
                             ? 'Excellent combo x$combo !'
                             : 'Bonne réponse • +5 XP !'
+                      : timedOut
+                      ? 'Bip bip… le chrono a gagné !'
+                      : noLivesLeft
+                      ? 'Aïe, dernier cœur perdu !'
+                      : lifeMode
+                      ? 'Presque ! Un cœur en moins'
                       : 'À retenir',
                   style: TextStyle(
                     color: color,
@@ -382,6 +489,10 @@ class QuizResultScreen extends StatelessWidget {
     required this.total,
     required this.earnedXp,
     required this.bestCombo,
+    required this.gameReward,
+    required this.sessionQuestions,
+    required this.playMode,
+    required this.secondsPerQuestion,
     super.key,
   });
 
@@ -391,10 +502,15 @@ class QuizResultScreen extends StatelessWidget {
   final int total;
   final int earnedXp;
   final int bestCombo;
+  final GameSessionReward gameReward;
+  final List<QuizQuestion> sessionQuestions;
+  final QuizPlayMode playMode;
+  final int secondsPerQuestion;
 
   int get percentage => ((score / total) * 100).round();
 
   String get message {
+    if (percentage == 100) return 'Carton plein ! Même le GPS applaudit.';
     if (percentage >= 90) return 'Excellent, vous maîtrisez le sujet !';
     if (percentage >= 70) return 'Très bien, les bases sont solides.';
     if (percentage >= 50) {
@@ -418,69 +534,76 @@ class QuizResultScreen extends StatelessWidget {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(20, 24, 20, 30),
           children: [
-            Container(
-              padding: const EdgeInsets.fromLTRB(24, 30, 24, 26),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [AppColors.ink, Color(definition.accentValue)],
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.fromLTRB(24, 30, 24, 26),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [AppColors.ink, Color(definition.accentValue)],
+                    ),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: Column(
+                    children: [
+                      Container(
+                        width: 92,
+                        height: 92,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.12),
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white24, width: 2),
+                        ),
+                        child: Icon(
+                          passed
+                              ? Icons.emoji_events_rounded
+                              : Icons.menu_book_rounded,
+                          color: passed
+                              ? const Color(0xFFFFC04D)
+                              : AppColors.coral,
+                          size: 50,
+                        ),
+                      ),
+                      const SizedBox(height: 18),
+                      Text(
+                        '$percentage%',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 48,
+                          height: 1,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                      const SizedBox(height: 9),
+                      Text(
+                        '$score bonnes réponses sur $total',
+                        style: const TextStyle(
+                          color: Color(0xFFE8DBE1),
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        message,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          height: 1.3,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: Column(
-                children: [
-                  TweenAnimationBuilder<double>(
-                    tween: Tween(begin: .55, end: 1),
-                    duration: const Duration(milliseconds: 650),
-                    curve: Curves.elasticOut,
-                    builder: (context, value, child) => Transform.scale(scale: value, child: child),
-                    child: Container(
-                      width: 92,
-                      height: 92,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.12),
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white24, width: 2),
-                      ),
-                      child: Icon(
-                        passed ? Icons.emoji_events_rounded : Icons.menu_book_rounded,
-                        color: passed ? const Color(0xFFFFC04D) : AppColors.coral,
-                        size: 50,
-                      ),
-                    ),
+                if (passed)
+                  const Positioned.fill(
+                    child: IgnorePointer(child: _VictoryBurst()),
                   ),
-                  const SizedBox(height: 18),
-                  Text(
-                    '$percentage%',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 48,
-                      height: 1,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                  const SizedBox(height: 9),
-                  Text(
-                    '$score bonnes réponses sur $total',
-                    style: const TextStyle(
-                      color: Color(0xFFE8DBE1),
-                      fontSize: 14,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    message,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      height: 1.3,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                ],
-              ),
+              ],
             ),
             const SizedBox(height: 20),
             Row(
@@ -504,6 +627,32 @@ class QuizResultScreen extends StatelessWidget {
                 ),
               ],
             ),
+            if (gameReward.completedMissionTitles.isNotEmpty ||
+                gameReward.lifeRestored) ...[
+              const SizedBox(height: 16),
+              _BonusRewardCard(reward: gameReward),
+            ],
+            if (playMode.usesLives) ...[
+              const SizedBox(height: 16),
+              Card(
+                child: ListTile(
+                  leading: const CircleAvatar(
+                    backgroundColor: Color(0xFFFFE8ED),
+                    foregroundColor: AppColors.red,
+                    child: Icon(Icons.favorite_rounded),
+                  ),
+                  title: Text(
+                    '${controller.lives} cœur(s) disponible(s)',
+                    style: const TextStyle(fontWeight: FontWeight.w800),
+                  ),
+                  subtitle: Text(
+                    controller.canStartGame
+                        ? 'Prêt pour une nouvelle manche !'
+                        : 'Les cœurs reviennent automatiquement demain.',
+                  ),
+                ),
+              ),
+            ],
             const SizedBox(height: 20),
             Card(
               child: Padding(
@@ -544,16 +693,21 @@ class QuizResultScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             FilledButton.icon(
-              onPressed: () {
-                Navigator.of(context).pushReplacement<void, void>(
-                  MaterialPageRoute<void>(
-                    builder: (context) => QuizScreen(
-                      definition: definition,
-                      controller: controller,
-                    ),
-                  ),
-                );
-              },
+              onPressed: playMode.usesLives && !controller.canStartGame
+                  ? null
+                  : () {
+                      Navigator.of(context).pushReplacement<void, void>(
+                        MaterialPageRoute<void>(
+                          builder: (context) => QuizScreen(
+                            definition: definition,
+                            controller: controller,
+                            sessionQuestions: sessionQuestions,
+                            playMode: playMode,
+                            secondsPerQuestion: secondsPerQuestion,
+                          ),
+                        ),
+                      );
+                    },
               icon: const Icon(Icons.replay_rounded),
               label: const Text('Recommencer ce quiz'),
             ),
@@ -565,6 +719,101 @@ class QuizResultScreen extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _VictoryBurst extends StatelessWidget {
+  const _VictoryBurst();
+
+  @override
+  Widget build(BuildContext context) {
+    const particles = <(Alignment, IconData, Color)>[
+      (Alignment(-0.82, -0.72), Icons.star_rounded, Color(0xFFFFC04D)),
+      (Alignment(0.82, -0.62), Icons.circle, AppColors.coral),
+      (Alignment(-0.72, 0.58), Icons.circle, Color(0xFF5FE0A0)),
+      (Alignment(0.78, 0.68), Icons.star_rounded, Color(0xFFFFC04D)),
+      (Alignment(-0.25, -0.88), Icons.auto_awesome, Colors.white),
+      (Alignment(0.32, 0.86), Icons.auto_awesome, Colors.white),
+    ];
+    return TweenAnimationBuilder<double>(
+      tween: Tween<double>(begin: 0, end: 1),
+      duration: const Duration(milliseconds: 1100),
+      curve: Curves.elasticOut,
+      builder: (context, value, child) {
+        return Stack(
+          children: [
+            for (var index = 0; index < particles.length; index++)
+              Align(
+                alignment: particles[index].$1,
+                child: Transform.rotate(
+                  angle: value * (index.isEven ? 0.8 : -0.8),
+                  child: Transform.scale(
+                    scale: value,
+                    child: Opacity(
+                      opacity: value.clamp(0.0, 1.0).toDouble(),
+                      child: Icon(
+                        particles[index].$2,
+                        color: particles[index].$3,
+                        size: index.isEven ? 25 : 18,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _BonusRewardCard extends StatelessWidget {
+  const _BonusRewardCard({required this.reward});
+
+  final GameSessionReward reward;
+
+  @override
+  Widget build(BuildContext context) {
+    final details = <String>[
+      for (final title in reward.completedMissionTitles) 'Mission : $title',
+      if (reward.lifeRestored) 'Sans-faute : un cœur récupéré',
+    ];
+    return Container(
+      padding: const EdgeInsets.all(17),
+      decoration: BoxDecoration(
+        color: AppColors.warning.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: AppColors.warning.withValues(alpha: 0.35)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(Icons.redeem_rounded, color: AppColors.warning, size: 30),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  reward.bonusXp > 0
+                      ? 'Cadeau bonus • +${reward.bonusXp} XP'
+                      : 'Cadeau bonus',
+                  style: const TextStyle(
+                    color: AppColors.ink,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  details.join('\n'),
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

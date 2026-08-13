@@ -28,23 +28,42 @@ class _MainShellState extends State<MainShell> {
   }
 
   Future<void> _offerReminders() async {
+    if (!mounted || widget.controller.notificationPromptSeen) return;
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        icon: const Icon(Icons.notifications_active_rounded, size: 38),
+        title: const Text('Votre rappel toutes les 12 h'),
+        content: const Text(
+          'Moi Géomaticien programme automatiquement un rappel pour garder votre série et réussir les missions du jour. Android ou iOS vous demandera son autorisation système.',
+        ),
+        actions: [
+          FilledButton.icon(
+            onPressed: () => Navigator.of(context).pop(),
+            icon: const Icon(Icons.notifications_rounded),
+            label: const Text('Continuer'),
+          ),
+        ],
+      ),
+    );
+    await widget.controller.setNotificationPromptSeen();
     if (!mounted) return;
     try {
-      var granted = widget.controller.notificationsEnabled;
-      if (!widget.controller.notificationPromptSeen || !widget.controller.notificationsEnabled) {
-        granted = await NotificationService.instance.requestPermission();
-        await widget.controller.setNotificationsEnabled(granted);
-        await widget.controller.setNotificationPromptSeen();
-        if (granted && mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('🔔 Rappels de 12 h activés. On garde le cap !')),
-          );
-        }
-      }
+      final granted = await NotificationService.instance.requestPermission();
+      await widget.controller.confirmAutomaticReminders();
       await ReminderService.refreshSchedule();
+      if (!granted && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Le rappel reste programmé, mais le système a refusé son affichage. Vous pouvez autoriser les notifications dans les réglages du téléphone.',
+            ),
+          ),
+        );
+      }
     } catch (error) {
       debugPrint('Activation des rappels impossible : $error');
-      await ReminderService.refreshSchedule();
     }
   }
 

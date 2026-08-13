@@ -80,21 +80,48 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('les rappels sont affichés comme automatiques sans bouton de désactivation', (
+  testWidgets('le premier lancement explique le rappel automatique', (
     tester,
   ) async {
+    SharedPreferences.setMockInitialValues(<String, Object>{});
+    final controller = await AppController.create();
+
+    await tester.pumpWidget(MoiGeomaticienApp(controller: controller));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Votre rappel toutes les 12 h'), findsOneWidget);
+    expect(find.text('Continuer'), findsOneWidget);
+    expect(find.text('Pas maintenant'), findsNothing);
+    expect(controller.notificationsEnabled, isTrue);
+  });
+
+  testWidgets('le hub propose les modes rapides et les missions', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
     SharedPreferences.setMockInitialValues(<String, Object>{
       'notifications.promptSeen': true,
-      'notifications.enabled': true,
     });
     final controller = await AppController.create();
 
     await tester.pumpWidget(MoiGeomaticienApp(controller: controller));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Progression'));
+    await tester.tap(find.text('Quiz'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Rappels automatiques • 12 h'), findsOneWidget);
-    expect(find.byType(Switch), findsNothing);
+    expect(find.text('Rapide 5'), findsOneWidget);
+    expect(find.text('Rapide 10'), findsOneWidget);
+    expect(find.textContaining('10 lettres'), findsOneWidget);
+    await tester.drag(
+      find.byKey(const PageStorageKey('quiz-hub-scroll')),
+      const Offset(0, -450),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Missions du jour'), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 }

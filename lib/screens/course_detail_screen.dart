@@ -195,7 +195,7 @@ class CourseDetailScreen extends StatelessWidget {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(
-                            'Cours terminé • +$reward XP ! Votre série continue.',
+                            'Leçon terminée • +$reward XP et +2 vies ! Votre série continue.',
                           ),
                           behavior: SnackBarBehavior.floating,
                         ),
